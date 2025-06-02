@@ -1,8 +1,9 @@
 #include <stdio.h>
 
-#include "./util/types.h"
+#include "types.h"
+#include "vec.h"
 
 i32 main(void) {
-    printf("Hello, world!\n");
+    printf(".\n");
     return 0;
 }
