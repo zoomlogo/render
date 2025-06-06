@@ -2,8 +2,8 @@ CC=clang
 # compiler flags
 FLAGS=-Wall -Ddebug -std=c23
 
-render: obj/main.o obj/vec.o obj/ppm.o
-	$(CC) $(FLAGS) obj/main.o obj/vec.o obj/ppm.o -o render
+render: obj/main.o obj/vec.o obj/ppm.o obj/camera.o
+	$(CC) $(FLAGS) -lm obj/main.o obj/vec.o obj/ppm.o obj/camera.o -o render
 
 obj/main.o: src/main.c
 	$(CC) -c $(FLAGS) src/main.c -o obj/main.o
@@ -13,6 +13,9 @@ obj/vec.o: src/vec.c src/vec.h
 
 obj/ppm.o: src/ppm.c src/ppm.h
 	$(CC) -c $(FLAGS) src/ppm.c -o obj/ppm.o
+
+obj/camera.o: src/camera.c src/camera.h
+	$(CC) -c $(FLAGS) src/camera.c -o obj/camera.o
 
 clean:
 	rm render
