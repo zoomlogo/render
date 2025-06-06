@@ -9,6 +9,8 @@
 
 i32 main(void) {
     rgb_t buffer[SCREEN_WIDTH * SCREEN_HEIGHT];
+
+    // populate the buffer
     for (usize i = 0; i < SCREEN_HEIGHT * SCREEN_WIDTH; i++) {
         buffer[i] = (rgb_t) { 255, 210, 120 };
     }

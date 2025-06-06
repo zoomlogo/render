@@ -2,22 +2,23 @@
 #include <math.h>
 #include "types.h"
 
+// vec3, mat3:
 typedef struct { f32 x, y, z; } vec3;
-#define vprint(v) \
+typedef struct { f32 v[9]; } mat3;
+#define vprint3(v) \
     ({ const vec3 _v = (v); \
-       printf("%f %f %f\n", _v.x, _v.y, _v.z); })
-#define dot(a,b) \
+       printf("vec3(%f, %f, %f)\n", _v.x, _v.y, _v.z); })
+#define dot3(a,b) \
     ({ const vec3 _a = (a), _b = (b); \
        _a.x*_b.x + _a.y*_b.y + _a.z*_b.z; })
-#define length(v) \
+#define length3(v) \
     ({ const vec3 _v = (v); \
-       sqrtf(dot(_v, _v)); })
-#define normalize(v) \
+       sqrtf(dot3(_v, _v)); })
+#define normalize3(v) \
     ({ const vec3 _v = (v); \
-       f32 _l = sqrtf(dot(_v, _v)); \
+       f32 _l = sqrtf(dot3(_v, _v)); \
        (vec3) { _v.x/_l, _v.y/_l, _v.z/_l }; })
 
-typedef struct { f64 v[9]; } mat3;
 #define eye3() \
     ((mat3) { {1, 0, 0, 0, 1, 0, 0, 0, 1} })
 #define one3() \
@@ -25,6 +26,32 @@ typedef struct { f64 v[9]; } mat3;
 #define zero3() \
     ((mat3) { {0, 0, 0, 0, 0, 0, 0, 0, 0} })
 
-mat3 mmul(mat3 a, mat3 b);
-vec3 mvmul(mat3 a, vec3 u);
+mat3 mmul3(mat3 a, mat3 b);
+vec3 mvmul3(mat3 a, vec3 u);
 
+// vec4, mat4
+typedef struct { f32 x, y, z, w; } vec4;
+typedef struct { f32 v[16]; } mat4;
+#define vprint4(v) \
+    ({ const vec4 _v = (v); \
+       printf("vec4(%f, %f, %f, %f)\n", _v.x, _v.y, _v.z, _v.w); })
+#define dot4(a,b) \
+    ({ const vec4 _a = (a), _b = (b); \
+       _a.x*_b.x + _a.y*_b.y + _a.z*_b.z + _a.w*_b.w; })
+#define length4(v) \
+    ({ const vec4 _v = (v); \
+       sqrtf(dot4(_v, _v)); })
+#define normalize4(v) \
+    ({ const vec4 _v = (v); \
+       f32 _l = sqrtf(dot4(_v, _v)); \
+       (vec4) { _v.x/_l, _v.y/_l, _v.z/_l, _v.w/_l }; })
+
+#define eye4() \
+    ((mat4) { {1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1} })
+#define one4() \
+    ((mat4) { {1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1} })
+#define zero4() \
+    ((mat4) { {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0} })
+
+mat4 mmul4(mat4 a, mat4 b);
+vec4 mvmul4(mat4 a, vec4 u);
