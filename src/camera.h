@@ -7,8 +7,7 @@ typedef struct {
     f32 fov;  // vertical fov
     f32 zNear, zFar;  // clipping plane distance
     f32 aspect_ratio;  // width to height ratio
-    usize vp_width, vp_height;  // screen width height (do i need this?)
-    f32 width, height;  // calculate using trig
+    f32 width, height;  // world space screen width/height
     mat4 screen_to_world_matrix;
 } camera_t;
 

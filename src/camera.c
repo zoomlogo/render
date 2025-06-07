@@ -6,14 +6,17 @@
 #include "camera.h"
 
 static inline mat4 screen_to_world_matrix(camera_t cam) {
+    // where do the basis vectors go?
     vec3 x = cam.screen_x_dir;
     vec3 z = cam.dir;
     vec3 y = cross3(x, z);
+
     // find point corresponding to (0, 0)
     vec3 origin = vadd3(cam.pos, fmul3(cam.zNear, cam.dir));
     origin = vadd3(origin, fmul3(-cam.width / 2, x));
     origin = vadd3(origin, fmul3(-cam.height / 2, y));
 
+    // build the matrix
     mat4 matrix = {
         x.x, y.x, 0, origin.x,
         x.y, y.y, 0, origin.y,
@@ -26,12 +29,13 @@ static inline mat4 screen_to_world_matrix(camera_t cam) {
 
 camera_t setup_camera(vec3 pos, vec3 dir, vec3 screen_x_dir, f32 fov, f32 zNear, usize sw, usize sh) {
     // basic setup
-    camera_t cam = (camera_t) { pos, dir, screen_x_dir, fov };
+    camera_t cam = (camera_t) { pos, normalize3(dir), normalize3(screen_x_dir), fov };
+
     // by default, set zFar to INFINITY
     cam.zNear = zNear;
     cam.zFar = INFINITY;
+
     cam.aspect_ratio = sw / (f32) sh;
-    cam.vp_width = sw; cam.vp_height = sh;
     cam.height = 2 * zNear * tanf(fov * M_PI / 360);
     cam.width = cam.height * cam.aspect_ratio;
 
