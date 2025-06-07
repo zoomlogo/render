@@ -5,16 +5,20 @@
 #include "vec.h"
 #include "camera.h"
 
-static inline mat4 screen_to_world_matrix(camera_t cam) {
+static inline mat4 screen_to_world_matrix(camera_t cam, usize sw, usize sh) {
     // where do the basis vectors go?
     vec3 x = cam.screen_x_dir;
     vec3 z = cam.dir;
     vec3 y = cross3(x, z);
 
     // find point corresponding to (0, 0)
-    vec3 origin = vadd3(cam.pos, fmul3(cam.zNear, cam.dir));
-    origin = vadd3(origin, fmul3(-cam.width / 2, x));
+    vec3 centre = vadd3(cam.pos, fmul3(cam.zNear, cam.dir));
+    vec3 origin = vadd3(centre, fmul3(-cam.width / 2, x));
     origin = vadd3(origin, fmul3(-cam.height / 2, y));
+
+    // normalize x, y
+    x = fmul3(cam.width / sw, x);
+    y = fmul3(cam.height / sh, y);
 
     // build the matrix
     mat4 matrix = {
@@ -40,13 +44,13 @@ camera_t setup_camera(vec3 pos, vec3 dir, vec3 screen_x_dir, f32 fov, f32 zNear,
     cam.width = cam.height * cam.aspect_ratio;
 
     // setup the transformation matrix for screen to world
-    cam.screen_to_world_matrix = screen_to_world_matrix(cam);
+    cam.screen_to_world_matrix = screen_to_world_matrix(cam, sw, sh);
 
     return cam;
 }
 
 vec3 screen_to_world_coords(camera_t cam, vec3 coords) {
-    vec4 in = { coords.x, coords.y, 0, 1 };
+    vec4 in = { coords.x + 0.5 , coords.y + 0.5 , 0, 1 };
     vec4 out = mvmul4(cam.screen_to_world_matrix, in);
     return (vec3) { out.x, out.y, out.z };
 }
