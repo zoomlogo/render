@@ -11,6 +11,17 @@ typedef struct { f32 v[9]; } mat3;
 #define dot3(a,b) \
     ({ const vec3 _a = (a), _b = (b); \
        _a.x*_b.x + _a.y*_b.y + _a.z*_b.z; })
+#define cross3(a,b) \
+    ({ const vec3 _a = (a), _b = (b); \
+       (vec3) { _a.y*_b.z - _a.z*_b.y, \
+                _a.z*_b.x - _a.x*_b.z, \
+                _a.x*_b.y - _a.y*_b.x }; })
+#define fmul3(X,a) \
+    ({ const f32 _x = (X); const vec3 _a = (a); \
+       (vec3) { _x*_a.x, _x*_a.y, _x*_a.z }; })
+#define vadd3(a,b) \
+    ({ const vec3 _a = (a), _b = (b); \
+       (vec3) { _a.x + _b.x, _a.y + _b.y, _a.z + _b.z}; })
 #define length3(v) \
     ({ const vec3 _v = (v); \
        sqrtf(dot3(_v, _v)); })
