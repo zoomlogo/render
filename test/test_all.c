@@ -7,7 +7,7 @@ usize test_num = 0;
 usize passed = 0;
 
 i32 main(void) {
-	test_vec();
+    test_vec();
 
-	return 0;
+    return 0;
 }

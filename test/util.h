@@ -10,5 +10,5 @@
     else { \
         printf("test failed @ %s:%d\n", __FILE__, __LINE__); \
     } })
-#define BEGIN_TEST() printf("entering %s...\n", __FILE__);
-#define END_TEST() printf("%lu / %lu passed.\n", passed, test_num);
+#define BEGIN_TEST() printf("entering %s...\n", __FILE__); test_num = 0
+#define END_TEST() printf("%lu / %lu passed.\n", passed, test_num)
