@@ -2,6 +2,7 @@
 
 #include "types.h"
 #include "camera.h"
+#include "render.h"
 #include "vec.h"
 #include "ppm.h"
 
@@ -15,31 +16,25 @@
 i32 main(void) {
     rgb_t buffer[SCREEN_WIDTH * SCREEN_HEIGHT];
 
+    // camera setup
+    camera_t camera = setup_camera(
+        (vec3) {0,0,0},  // pos
+        (vec3) {1,0,0},  // dir
+        (vec3) {0,0,1},  // screen_x_dir
+        90,  // fov
+        2,  // zNear
+        SCREEN_WIDTH, SCREEN_HEIGHT
+    );
+    printf("width & height: ");
+    vprint3((vec3) {camera.width, camera.height, 0});
+
+    // scene setup
+
     // populate the buffer
     for (usize i = 0; i < SCREEN_HEIGHT * SCREEN_WIDTH; i++) {
-        buffer[i] = (rgb_t) { 255, 210, 120 };
-    }
+        // TODO: ray calculation
 
-    // camera
-    camera_t camera = setup_camera(
-        (vec3) {0,0,0},
-        (vec3) {1,0,0},
-        (vec3) {0,0,1},
-        90, 2, SCREEN_WIDTH, SCREEN_HEIGHT
-    );
-    printf("aspect ratio: %f\n", camera.aspect_ratio);
-    printf("world screen width: %f\n", camera.width);
-    printf("world screen height: %f\n", camera.height);
-    printf("testing...\n");
-    vec3 v;
-    for (usize i = 0; i < SCREEN_WIDTH * SCREEN_HEIGHT; i++) {
-        printf("==================\n");
-        printf("i = %lu\n", i);
-        v = i2v(i);
-        printf("v = ");
-        vprint3(v);
-        printf("w = ");
-        vprint3(screen_to_world_coords(camera, v));
+        buffer[i] = (rgb_t) { 255, 210, 120 };
     }
 
     // write to output image

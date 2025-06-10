@@ -5,7 +5,7 @@
 #include "vec.h"
 #include "camera.h"
 
-static inline mat4 screen_to_world_matrix(camera_t cam, usize sw, usize sh) {
+static inline mat4 screen_to_world_matrix(camera_t cam, usize screen_width, usize screen_height) {
     // where do the basis vectors go?
     vec3 x = cam.screen_x_dir;
     vec3 z = cam.dir;
@@ -16,9 +16,9 @@ static inline mat4 screen_to_world_matrix(camera_t cam, usize sw, usize sh) {
     vec3 origin = vadd3(centre, fmul3(-cam.width / 2, x));
     origin = vadd3(origin, fmul3(-cam.height / 2, y));
 
-    // normalize x, y
-    x = fmul3(cam.width / sw, x);
-    y = fmul3(cam.height / sh, y);
+    // “normalize” x, y
+    x = fmul3(cam.width / screen_width, x);
+    y = fmul3(cam.height / screen_height, y);
 
     // build the matrix
     mat4 matrix = {
@@ -31,7 +31,7 @@ static inline mat4 screen_to_world_matrix(camera_t cam, usize sw, usize sh) {
     return matrix;
 }
 
-camera_t setup_camera(vec3 pos, vec3 dir, vec3 screen_x_dir, f32 fov, f32 zNear, usize sw, usize sh) {
+camera_t setup_camera(vec3 pos, vec3 dir, vec3 screen_x_dir, f32 fov, f32 zNear, usize screen_width, usize screen_height) {
     // basic setup
     camera_t cam = (camera_t) { pos, normalize3(dir), normalize3(screen_x_dir), fov };
 
@@ -39,12 +39,13 @@ camera_t setup_camera(vec3 pos, vec3 dir, vec3 screen_x_dir, f32 fov, f32 zNear,
     cam.zNear = zNear;
     cam.zFar = INFINITY;
 
-    cam.aspect_ratio = sw / (f32) sh;
+    cam.aspect_ratio = screen_width / (f32) screen_height;
     cam.height = 2 * zNear * tanf(fov * M_PI / 360);
     cam.width = cam.height * cam.aspect_ratio;
 
     // setup the transformation matrix for screen to world
-    cam.screen_to_world_matrix = screen_to_world_matrix(cam, sw, sh);
+    cam.screen_to_world_matrix = screen_to_world_matrix(cam,
+        screen_width, screen_height);
 
     return cam;
 }

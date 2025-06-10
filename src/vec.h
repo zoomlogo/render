@@ -5,7 +5,7 @@
 // vec3, mat3:
 typedef struct { f32 x, y, z; } vec3;
 typedef struct { f32 v[9]; } mat3;
-#define vprint3(v) \
+#define vprint3(v...) \
     ({ const vec3 _v = (v); \
        printf("vec3(%f, %f, %f)\n", _v.x, _v.y, _v.z); })
 #define dot3(a,b) \
@@ -22,6 +22,7 @@ typedef struct { f32 v[9]; } mat3;
 #define vadd3(a,b) \
     ({ const vec3 _a = (a), _b = (b); \
        (vec3) { _a.x + _b.x, _a.y + _b.y, _a.z + _b.z}; })
+#define vsub3(a,b) vadd3(a, fmul3(-1, b))
 #define length3(v) \
     ({ const vec3 _v = (v); \
        sqrtf(dot3(_v, _v)); })
@@ -43,7 +44,7 @@ vec3 mvmul3(mat3 a, vec3 u);
 // vec4, mat4
 typedef struct { f32 x, y, z, w; } vec4;
 typedef struct { f32 v[16]; } mat4;
-#define vprint4(v) \
+#define vprint4(v...) \
     ({ const vec4 _v = (v); \
        printf("vec4(%f, %f, %f, %f)\n", _v.x, _v.y, _v.z, _v.w); })
 #define dot4(a,b) \
