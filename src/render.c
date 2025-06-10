@@ -11,7 +11,7 @@ hitinfo_t ray_sphere_intersection(ray_t ray, sphere_t sphere) {
 
     // coefficients of the quadratic
     f32 a = 1;
-    f32 b = 2 * dot3(vsub3(ray.pos, sphere.pos), ray.dir)
+    f32 b = 2 * dot3(vsub3(ray.pos, sphere.pos), ray.dir);
     f32 c = dot3(ray.pos, ray.pos) + dot3(sphere.pos, sphere.pos)
         - 2 * dot3(ray.pos, sphere.pos) - sphere.r * sphere.r;
 
