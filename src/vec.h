@@ -8,6 +8,9 @@ typedef struct { f32 v[9]; } mat3;
 #define vprint3(v...) \
     ({ const vec3 _v = (v); \
        printf("vec3(%f, %f, %f)\n", _v.x, _v.y, _v.z); })
+#define eql3(a,b) \
+    ({ const vec3 _a = (a), _b = (b); \
+       (_a.x == _b.x) && (_a.y == _b.y) && (_a.z == _b.z); })
 #define dot3(a,b) \
     ({ const vec3 _a = (a), _b = (b); \
        _a.x*_b.x + _a.y*_b.y + _a.z*_b.z; })
@@ -47,6 +50,9 @@ typedef struct { f32 v[16]; } mat4;
 #define vprint4(v...) \
     ({ const vec4 _v = (v); \
        printf("vec4(%f, %f, %f, %f)\n", _v.x, _v.y, _v.z, _v.w); })
+#define eql4(a,b) \
+    ({ const vec4 _a = (a), _b = (b); \
+       (_a.x == _b.x) && (_a.y == _b.y) && (_a.z == _b.z) && (_a.w == _b.w); })
 #define dot4(a,b) \
     ({ const vec4 _a = (a), _b = (b); \
        _a.x*_b.x + _a.y*_b.y + _a.z*_b.z + _a.w*_b.w; })
