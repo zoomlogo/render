@@ -2,12 +2,14 @@
 #include "util.h"
 #include "../src/types.h"
 #include "test_vec.h"
+#include "test_ppm.h"
 
 usize test_num = 0;
 usize passed = 0;
 
 i32 main(void) {
     test_vec();
+    test_ppm();
 
     return 0;
 }
