@@ -13,6 +13,7 @@ typedef struct sphere_t {
 
 typedef struct hitinfo_t {
     bool did_hit;
+    f32 dstA, dstB;
 } hitinfo_t;
 
 hitinfo_t ray_sphere_intersection(ray_t ray, sphere_t sphere);
