@@ -10,7 +10,7 @@ RENDER_DEPS += obj/camera.o obj/render.o
 TEST_DEPS := obj/vec.o obj/ppm.o
 TEST_DEPS += obj/camera.o obj/render.o
 TEST_DEPS += obj/test_all.o obj/test_vec.o obj/test_ppm.o
-TEST_DEPS += obj/test_camera.o
+TEST_DEPS += obj/test_camera.o obj/test_render.o
 
 render: $(RENDER_DEPS)
 	$(CC) $(FLAGS) -lm $(RENDER_DEPS) -o render
@@ -46,6 +46,9 @@ obj/test_ppm.o: test/test_ppm.c test/test_ppm.h
 
 obj/test_camera.o: test/test_camera.c test/test_camera.h
 	$(CC) -c $(FLAGS) test/test_camera.c -o obj/test_camera.o
+
+obj/test_render.o: test/test_render.c test/test_render.h
+	$(CC) -c $(FLAGS) test/test_render.c -o obj/test_render.o
 
 # misc:
 clean:
