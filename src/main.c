@@ -42,7 +42,7 @@ i32 main(void) {
         vec3 coords = i2v(i);
         vec3 world_coords = screen_to_world_coords(camera, coords);
         vec3 dir = normalize3(vsub3(world_coords, camera.pos));
-        ray_t ray = { camera.pos, dir };
+        ray_t ray = { world_coords, dir };
 
         // sphere checking
         usize closest_sphere_i = 0;
