@@ -19,11 +19,27 @@ hitinfo_t ray_sphere_intersection(ray_t ray, sphere_t sphere) {
     f32 D = b * b - 4 * a * c;
     if (D >= 0) {
         hitinfo.did_hit = true;
-        // FIXME pray to God no one puts ray origin inside/on sphere
         // find distances (basically t, XXX hope n̄ is normalized)
-        // XXX these distances can be negative (see FIXME)
-        hitinfo.dstA = (-b - sqrtf(D)) / (2 * a);
-        hitinfo.dstB = (-b + sqrtf(D)) / (2 * a);
+        f32 t1 = (-b - sqrtf(D)) / (2 * a);
+        f32 t2 = (-b + sqrtf(D)) / (2 * a);
+
+        if (t1 <= 0 && t2 > 0) {
+            // inside/on sphere
+            t1 = fabsf(t2);
+            t2 = INFINITY;
+        } else if (t1 > 0 && t2 <= 0) {
+            // inside/on sphere
+            t1 = fabsf(t1);
+            t2 = INFINITY;
+        } else if (t1 <= 0 && t2 <= 0) {
+            // missed sphere
+            hitinfo.did_hit = false;
+            t1 = INFINITY;
+            t2 = INFINITY;
+        }
+
+        hitinfo.dstA = t1;
+        hitinfo.dstB = t2;
 
         // TODO add normal calc...
     } else {

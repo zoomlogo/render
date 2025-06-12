@@ -34,6 +34,7 @@ i32 main(void) {
         (sphere_t) { (vec3) {20, 2, 5}, 3, (material_t) { GREEN } },
         (sphere_t) { (vec3) {20, -2, 0}, 3, (material_t) { BLUE } },
     };
+    f32 depth[] = {4, 4, 4};  // depth buffer
 
     // populate the buffer
     for (usize i = 0; i < SCREEN_HEIGHT * SCREEN_WIDTH; i++) {

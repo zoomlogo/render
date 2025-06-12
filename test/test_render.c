@@ -9,31 +9,35 @@ static void test_ray_sphere_intersection(void) {
     ray_t ray;
     hitinfo_t hitinfo;
     // ray doesn't intersect sphere:
-    // test 1a
     sphere = (sphere_t) { (vec3) {0, 2, 0}, 1 };
     ray = (ray_t) { (vec3) {0, 0, 0}, (vec3) {1, 0, 0} };
     hitinfo = ray_sphere_intersection(ray, sphere);
     ASSERT(hitinfo.did_hit == false);
-    // test 1b
-    sphere = (sphere_t) { (vec3) {-1, 2, 0}, 2 };
-    ray = (ray_t) { (vec3) {1, 0, 0}, (vec3) {1, 1, 0} };
-    hitinfo = ray_sphere_intersection(ray, sphere);
-    ASSERT(hitinfo.did_hit == false);
     // ray is tangent to sphere:
-    // test 2
-    sphere = (sphere_t) { (vec3) {0, 0, 4}, 1 };
-    ray = (ray_t) { (vec3) {-1, 0, 4}, (vec3) {0, 1, 0} };
+    sphere = (sphere_t) { (vec3) {0, 0, 0}, 1 };
+    ray = (ray_t) { (vec3) {-1, -1, 0}, (vec3) {1, 0, 0} };
     hitinfo = ray_sphere_intersection(ray, sphere);
     ASSERT(hitinfo.did_hit == true);
     ASSERT(hitinfo.dstA == hitinfo.dstB);
     // ray hits sphere at 2 distinct points:
-    // test 3
     sphere = (sphere_t) { (vec3) {0, 4, 0}, 2 };
     ray = (ray_t) { (vec3) {0, 0, 0}, (vec3) {0, 1, 0} };
     hitinfo = ray_sphere_intersection(ray, sphere);
     ASSERT(hitinfo.did_hit == true);
     ASSERT(hitinfo.dstA == 2);
     ASSERT(hitinfo.dstB == 6);
+    // ray originates from inside sphere
+    sphere = (sphere_t) { (vec3) {0, 0, 0}, 2 };
+    ray = (ray_t) { (vec3) {0, 0, 0}, (vec3) {0, 1, 0} };
+    hitinfo = ray_sphere_intersection(ray, sphere);
+    ASSERT(hitinfo.did_hit == true);
+    ASSERT(hitinfo.dstA == 2);
+    ASSERT(hitinfo.dstB == INFINITY);
+    // ray misses sphere (but lies on the line defined by ray)
+    sphere = (sphere_t) { (vec3) {0, 2, 0}, 1 };
+    ray = (ray_t) { (vec3) {0, 6, 0}, (vec3) {0, 1, 0} };
+    hitinfo = ray_sphere_intersection(ray, sphere);
+    ASSERT(hitinfo.did_hit == false);
 }
 
 void test_render(void) {
