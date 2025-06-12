@@ -18,9 +18,9 @@ i32 main(void) {
 
     // camera setup
     camera_t camera = setup_camera(
-        (vec3) {0,0,0},  // pos
-        (vec3) {1,0,0},  // dir
-        (vec3) {0,0,1},  // screen_x_dir
+        (vec3) {0, 0, 10},  // pos
+        (vec3) {0, 0, -1},  // dir
+        (vec3) {1, 0, 0},  // screen_x_dir
         90,  // fov
         4,  // zNear
         SCREEN_WIDTH, SCREEN_HEIGHT
@@ -30,9 +30,11 @@ i32 main(void) {
 
     // scene setup
     sphere_t spheres[] = {
-        (sphere_t) { (vec3) {25, -4, -5}, 8, (material_t) { RED } },
-        (sphere_t) { (vec3) {15, -1, 5}, 5, (material_t) { GREEN } },
-        (sphere_t) { (vec3) {20, -2, 0}, 3, (material_t) { BLUE } },
+        (sphere_t) { (vec3) {-6, 4, 0}, 1, (material_t) { RED } },
+        (sphere_t) { (vec3) {0, 0, 0}, 2, (material_t) { GREEN } },
+        (sphere_t) { (vec3) {3, 5, 0}, 3, (material_t) { BLUE } },
+        (sphere_t) { (vec3) {6, 0, -5}, 2, (material_t) { CYAN } },
+        (sphere_t) { (vec3) {-5, -3, 1}, 2, (material_t) { YELLOW } },
     };
 
     // populate the buffer
@@ -47,7 +49,6 @@ i32 main(void) {
         // sphere checking
         usize closest_sphere_i = 0;
         f32 dst = INFINITY;
-        vec3 normal;
         for (usize j = 0; j < sizeof(spheres) / sizeof(sphere_t); j++) {
             sphere_t sphere = spheres[j];
             hitinfo_t hitinfo = ray_sphere_intersection(ray, sphere);
@@ -56,14 +57,12 @@ i32 main(void) {
             if (min(hitinfo.dstA, dst) != dst) {
                 dst = hitinfo.dstA;
                 closest_sphere_i = j;
-                normal = hitinfo.normal;
             }
         }
 
         // write colour to buffer
         if (dst != INFINITY)
-            /* buffer[i] = spheres[closest_sphere_i].material.colour; */
-            buffer[i] = rgb(normal); // normal map
+            buffer[i] = spheres[closest_sphere_i].material.colour;
     }
 
     // write to output image
