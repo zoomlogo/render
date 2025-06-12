@@ -6,8 +6,8 @@
 #include "vec.h"
 #include "ppm.h"
 
-#define SCREEN_WIDTH 320
-#define SCREEN_HEIGHT 480
+#define SCREEN_WIDTH 480
+#define SCREEN_HEIGHT 320
 
 // buffer index to vec3 and vice versa
 #define i2v(i) ({ const usize _i = (i); (vec3) { _i%SCREEN_WIDTH, SCREEN_HEIGHT - _i/SCREEN_WIDTH - 1, 0 }; })
@@ -30,11 +30,12 @@ i32 main(void) {
 
     // scene setup
     sphere_t spheres[] = {
-        { (vec3) {10, 0, 0}, 3 }
+        (sphere_t) { (vec3) {20, 2, -5}, 3, (material_t) { RED } },
+        (sphere_t) { (vec3) {20, 2, 5}, 3, (material_t) { GREEN } },
+        (sphere_t) { (vec3) {20, -2, 0}, 3, (material_t) { BLUE } },
     };
 
     // populate the buffer
-    sphere_t sphere = spheres[0];
     for (usize i = 0; i < SCREEN_HEIGHT * SCREEN_WIDTH; i++) {
         // raycast
         vec3 coords = i2v(i);
@@ -42,11 +43,14 @@ i32 main(void) {
         vec3 dir = normalize3(vsub3(world_coords, camera.pos));
         ray_t ray = { camera.pos, dir };
 
-        hitinfo_t hitinfo = ray_sphere_intersection(ray, sphere);
-        if (hitinfo.did_hit)
-            buffer[i] = RED;
-        else
-            buffer[i] = BLACK;
+        // TODO depth checking
+        buffer[i] = BLACK;
+        for (usize j = 0; j < sizeof(spheres) / sizeof(sphere_t); j++) {
+            sphere_t sphere = spheres[j];
+            hitinfo_t hitinfo = ray_sphere_intersection(ray, sphere);
+            if (hitinfo.did_hit)
+                buffer[i] = sphere.material.colour;
+        }
     }
 
     // write to output image
