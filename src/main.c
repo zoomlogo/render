@@ -30,11 +30,11 @@ i32 main(void) {
 
     // scene setup
     sphere_t spheres[] = {
-        (sphere_t) { (vec3) {20, 2, -5}, 3, (material_t) { RED } },
-        (sphere_t) { (vec3) {20, 2, 5}, 3, (material_t) { GREEN } },
+        (sphere_t) { (vec3) {25, -4, -5}, 8, (material_t) { RED } },
+        (sphere_t) { (vec3) {15, -1, 5}, 5, (material_t) { GREEN } },
         (sphere_t) { (vec3) {20, -2, 0}, 3, (material_t) { BLUE } },
     };
-    f32 depth[] = {4, 4, 4};  // depth buffer
+    f32 depth[3];  // depth buffer
 
     // populate the buffer
     for (usize i = 0; i < SCREEN_HEIGHT * SCREEN_WIDTH; i++) {
@@ -49,9 +49,21 @@ i32 main(void) {
         for (usize j = 0; j < sizeof(spheres) / sizeof(sphere_t); j++) {
             sphere_t sphere = spheres[j];
             hitinfo_t hitinfo = ray_sphere_intersection(ray, sphere);
-            if (hitinfo.did_hit)
-                buffer[i] = sphere.material.colour;
+            depth[j] = hitinfo.dstA;
         }
+
+        // TODO can we combine this with the above loop? (answer is yes)
+        usize closest_sphere_i = 0; f32 dst = INFINITY;
+        for (usize j = 0; j < sizeof(spheres) / sizeof(sphere_t); j++) {
+            if (min(depth[j], dst) != dst) {
+                dst = depth[j];
+                closest_sphere_i = j;
+            }
+        }
+
+        // write colour to buffer
+        if (dst != INFINITY)
+            buffer[i] = spheres[closest_sphere_i].material.colour;
     }
 
     // write to output image
