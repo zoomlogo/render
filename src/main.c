@@ -34,29 +34,26 @@ i32 main(void) {
         (sphere_t) { (vec3) {15, -1, 5}, 5, (material_t) { GREEN } },
         (sphere_t) { (vec3) {20, -2, 0}, 3, (material_t) { BLUE } },
     };
-    f32 depth[3];  // depth buffer
 
     // populate the buffer
     for (usize i = 0; i < SCREEN_HEIGHT * SCREEN_WIDTH; i++) {
+        buffer[i] = BLACK;
         // raycast
         vec3 coords = i2v(i);
         vec3 world_coords = screen_to_world_coords(camera, coords);
         vec3 dir = normalize3(vsub3(world_coords, camera.pos));
         ray_t ray = { camera.pos, dir };
 
-        // TODO depth checking
-        buffer[i] = BLACK;
+        // sphere checking
+        usize closest_sphere_i = 0;
+        f32 dst = INFINITY;
         for (usize j = 0; j < sizeof(spheres) / sizeof(sphere_t); j++) {
             sphere_t sphere = spheres[j];
             hitinfo_t hitinfo = ray_sphere_intersection(ray, sphere);
-            depth[j] = hitinfo.dstA;
-        }
 
-        // TODO can we combine this with the above loop? (answer is yes)
-        usize closest_sphere_i = 0; f32 dst = INFINITY;
-        for (usize j = 0; j < sizeof(spheres) / sizeof(sphere_t); j++) {
-            if (min(depth[j], dst) != dst) {
-                dst = depth[j];
+            // depth checking
+            if (min(hitinfo.dstA, dst) != dst) {
+                dst = hitinfo.dstA;
                 closest_sphere_i = j;
             }
         }
