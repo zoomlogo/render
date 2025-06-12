@@ -6,8 +6,8 @@
 #include "vec.h"
 #include "ppm.h"
 
-#define SCREEN_WIDTH 10
-#define SCREEN_HEIGHT 5
+#define SCREEN_WIDTH 320
+#define SCREEN_HEIGHT 480
 
 // buffer index to vec3 and vice versa
 #define i2v(i) ({ const usize _i = (i); (vec3) { _i%SCREEN_WIDTH, SCREEN_HEIGHT - _i/SCREEN_WIDTH - 1, 0 }; })
@@ -22,19 +22,31 @@ i32 main(void) {
         (vec3) {1,0,0},  // dir
         (vec3) {0,0,1},  // screen_x_dir
         90,  // fov
-        2,  // zNear
+        4,  // zNear
         SCREEN_WIDTH, SCREEN_HEIGHT
     );
     printf("width & height: ");
     vprint3((vec3) {camera.width, camera.height, 0});
 
     // scene setup
+    sphere_t spheres[] = {
+        { (vec3) {10, 0, 0}, 3 }
+    };
 
     // populate the buffer
+    sphere_t sphere = spheres[0];
     for (usize i = 0; i < SCREEN_HEIGHT * SCREEN_WIDTH; i++) {
-        // TODO: ray calculation
+        // raycast
+        vec3 coords = i2v(i);
+        vec3 world_coords = screen_to_world_coords(camera, coords);
+        vec3 dir = normalize3(vsub3(world_coords, camera.pos));
+        ray_t ray = { camera.pos, dir };
 
-        buffer[i] = (rgb_t) { 255, 210, 120 };
+        hitinfo_t hitinfo = ray_sphere_intersection(ray, sphere);
+        if (hitinfo.did_hit)
+            buffer[i] = RED;
+        else
+            buffer[i] = BLACK;
     }
 
     // write to output image
