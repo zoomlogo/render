@@ -47,6 +47,7 @@ i32 main(void) {
         // sphere checking
         usize closest_sphere_i = 0;
         f32 dst = INFINITY;
+        vec3 normal;
         for (usize j = 0; j < sizeof(spheres) / sizeof(sphere_t); j++) {
             sphere_t sphere = spheres[j];
             hitinfo_t hitinfo = ray_sphere_intersection(ray, sphere);
@@ -55,12 +56,14 @@ i32 main(void) {
             if (min(hitinfo.dstA, dst) != dst) {
                 dst = hitinfo.dstA;
                 closest_sphere_i = j;
+                normal = hitinfo.normal;
             }
         }
 
         // write colour to buffer
         if (dst != INFINITY)
-            buffer[i] = spheres[closest_sphere_i].material.colour;
+            /* buffer[i] = spheres[closest_sphere_i].material.colour; */
+            buffer[i] = rgb(normal); // normal map
     }
 
     // write to output image

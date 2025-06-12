@@ -41,7 +41,11 @@ hitinfo_t ray_sphere_intersection(ray_t ray, sphere_t sphere) {
         hitinfo.dstA = t1;
         hitinfo.dstB = t2;
 
-        // TODO add normal calc...
+        // calculate surface normal
+        if (t1 != INFINITY) {
+            vec3 intersection_point = vadd3(ray.pos, fmul3(t1, ray.dir));
+            hitinfo.normal = normalize3(vsub3(intersection_point, sphere.pos));
+        }
     } else {
         hitinfo.did_hit = false;
         hitinfo.dstA = hitinfo.dstB = INFINITY;
