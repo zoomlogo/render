@@ -8,7 +8,7 @@ typedef struct ray_t {
 } ray_t;
 
 typedef struct material_t {
-    rgb_t colour;
+    vec3 colour;
 } material_t;
 
 typedef struct sphere_t {
@@ -26,4 +26,4 @@ typedef struct hitinfo_t {
 
 hitinfo_t ray_sphere_intersection(ray_t ray, sphere_t sphere);
 hitinfo_t get_closest_hit(ray_t ray, sphere_t *spheres, usize N);
-rgb_t trace(ray_t original_ray, sphere_t *spheres, usize N, usize num_bounces);
+vec3 trace(ray_t original_ray, sphere_t *spheres, usize N, usize num_bounces);

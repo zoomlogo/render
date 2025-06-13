@@ -17,7 +17,7 @@
 #define v2i(v) ({ const vec3 _v = (v); (usize) ((SCREEN_HEIGHT - _v.y - 1) * SCREEN_WIDTH + _v.x); })
 
 i32 main(void) {
-    rgb_t buffer[SCREEN_WIDTH * SCREEN_HEIGHT];
+    vec3 buffer[SCREEN_WIDTH * SCREEN_HEIGHT];
 
     // set random
     srand((u32) time(NULL));

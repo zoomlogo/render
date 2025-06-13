@@ -9,16 +9,15 @@ typedef struct { u8 r, g, b; } rgb_t;
        printf("rgb(%d, %d, %d)\n", _c.r, _c.g, _c.b); })
 
 // some common colours
-#define BLACK ((rgb_t) {0, 0, 0})
-#define WHITE ((rgb_t) {255, 255, 255})
-#define RED ((rgb_t) {255, 0, 0})
-#define GREEN ((rgb_t) {0, 255, 0})
-#define BLUE ((rgb_t) {0, 0, 255})
-#define CYAN ((rgb_t) {0, 255, 255})
-#define YELLOW ((rgb_t) {255, 255, 0})
-#define VIOLET ((rgb_t) {255, 0, 255})
+#define BLACK ((vec3) {0, 0, 0})
+#define WHITE ((vec3) {1, 1, 1})
+#define RED ((vec3) {1, 0, 0})
+#define GREEN ((vec3) {0, 1, 0})
+#define BLUE ((vec3) {0, 0, 1})
+#define CYAN ((vec3) {0, 1, 1})
+#define YELLOW ((vec3) {1, 1, 0})
+#define VIOLET ((vec3) {1, 0, 1})
 
 rgb_t rgb(vec3 v);
-vec3 vec(rgb_t c);
-void ppm(FILE *file, rgb_t *pixels, usize width, usize height);
+void ppm(FILE *file, vec3 *pixels, usize width, usize height);
 
