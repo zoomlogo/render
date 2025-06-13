@@ -9,6 +9,8 @@ typedef struct ray_t {
 
 typedef struct material_t {
     vec3 colour;
+    f32 emission_strength;
+    vec3 emission_colour;
 } material_t;
 
 typedef struct sphere_t {

@@ -71,24 +71,28 @@ hitinfo_t get_closest_hit(ray_t ray, sphere_t *spheres, usize N) {
 }
 
 vec3 trace(ray_t original_ray, sphere_t *spheres, usize N, usize num_bounces) {
-    vec3 colour = { 1, 1, 1 };
+    vec3 ray_colour = { 1, 1, 1 };
+    vec3 incoming_light = { 0, 0, 0 };
     ray_t ray = original_ray;
 
     for (usize i = 0; i < num_bounces + 1; i++) {
         hitinfo_t hit = get_closest_hit(ray, spheres, N);
         if (hit.did_hit) {
-            // TODO do math
-            // what need to do?
-            // just multiply the colours :P
-            colour = vmul3(colour, hit.material.colour);
-
             // bounce
             ray.pos = hit.point;
+            // diffuse reflection
             ray.dir = rand_sphere_diffuse(hit.normal);
+
+            material_t material = hit.material;
+            // incoming light calculation
+            vec3 emitted_light = fmul3(material.emission_strength, material.emission_colour);
+            incoming_light = vadd3(incoming_light, vmul3(emitted_light, ray_colour));
+            ray_colour = vmul3(ray_colour, material.colour);
         } else {
+            // TODO get env light here
             break;
         }
     }
 
-    return colour;
+    return incoming_light;
 }

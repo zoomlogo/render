@@ -40,7 +40,7 @@ i32 main(void) {
         (sphere_t) { (vec3) {0, 2, 0}, 2, (material_t) { GREEN } },
         (sphere_t) { (vec3) {-5, -0.25, 2}, 1, (material_t) { BLUE } },
         (sphere_t) { (vec3) {5, -0.25, 2}, 1, (material_t) { CYAN } },
-        (sphere_t) { (vec3) {-20, 8, -10}, 4, (material_t) { YELLOW } },
+        (sphere_t) { (vec3) {-10, 6, -1}, 2, (material_t) { WHITE, 2, WHITE } },
     };
 
     // populate the buffer
