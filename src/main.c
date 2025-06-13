@@ -45,19 +45,13 @@ i32 main(void) {
 
     // populate the buffer
     for (usize i = 0; i < SCREEN_HEIGHT * SCREEN_WIDTH; i++) {
-        buffer[i] = BLACK;
         // raycast
         vec3 coords = i2v(i);
         vec3 world_coords = screen_to_world_coords(camera, coords);
         vec3 dir = normalize3(vsub3(world_coords, camera.pos));
         ray_t ray = { world_coords, dir };
 
-        // sphere checking
-        hitinfo_t closest_hit = get_closest_hit(ray, spheres, sizeof(spheres) / sizeof(sphere_t));
-
-        // write colour to buffer
-        if (closest_hit.did_hit)
-            buffer[i] = closest_hit.material.colour;
+        buffer[i] = trace(ray, spheres,  sizeof(spheres) / sizeof(sphere_t), 0);
     }
 
     // write to output image

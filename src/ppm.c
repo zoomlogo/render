@@ -11,6 +11,14 @@ rgb_t rgb(vec3 v) {
     };
 }
 
+vec3 vec(rgb_t c) {
+    return (vec3) {
+        (f32) c.r / 255,
+        (f32) c.g / 255,
+        (f32) c.b / 255
+    };
+}
+
 void ppm(FILE *file, rgb_t *pixels, usize width, usize height) {
     usize buf_len = width * height;
     fprintf(file, "P3\n%lu %lu\n255\n", (unsigned long) width, (unsigned long) height);

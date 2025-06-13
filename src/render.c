@@ -1,6 +1,8 @@
 #include "types.h"
 #include "vec.h"
 #include "render.h"
+#include "random.h"
+#include "ppm.h"
 
 hitinfo_t ray_sphere_intersection(ray_t ray, sphere_t sphere) {
     // suppose: ray ≡ z̄ = r̄ + t·n̄
@@ -66,4 +68,13 @@ hitinfo_t get_closest_hit(ray_t ray, sphere_t *spheres, usize N) {
             closest_hit = hitinfo;
     }
     return closest_hit;
+}
+
+rgb_t trace(ray_t ray, sphere_t *spheres, usize N, usize num_bounces) {
+    vec3 colour = { 1, 1, 1 };
+
+    hitinfo_t hit = get_closest_hit(ray, spheres, N);
+    colour = vmul3(colour, vec(hit.material.colour));
+
+    return rgb(colour);
 }

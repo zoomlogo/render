@@ -52,6 +52,17 @@ static void test_fmul3(void) {
     ASSERT(eql3(fmul3(2, ((vec3) {1, 2, 3})), ((vec3) {2, 4, 6})));
 }
 
+static void test_vmul3(void) {
+    ASSERT(eql3(vmul3(
+        ((vec3) {2, 3, 1}),
+        ((vec3) {1, 2, 3})),
+        ((vec3) {2, 6, 3})));
+    ASSERT(eql3(vmul3(
+        ((vec3) {0, 3, 1}),
+        ((vec3) {1, 6, 0})),
+        ((vec3) {0, 18, 0})));
+}
+
 static void test_vadd3(void) {
     ASSERT(eql3(vadd3(
         ((vec3) {2, 3, 1}),
@@ -190,6 +201,7 @@ void test_vec(void) {
     test_dot3();
     test_cross3();
     test_fmul3();
+    test_vmul3();
     test_vadd3();
     test_vsub3();
     test_length3();

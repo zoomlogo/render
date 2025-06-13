@@ -19,5 +19,6 @@ typedef struct { u8 r, g, b; } rgb_t;
 #define VIOLET ((rgb_t) {255, 0, 255})
 
 rgb_t rgb(vec3 v);
+vec3 vec(rgb_t c);
 void ppm(FILE *file, rgb_t *pixels, usize width, usize height);
 

@@ -37,6 +37,9 @@ typedef struct { f32 v[9]; } mat3;
 #define fmul3(X,a) \
     ({ const f32 _x = (X); const vec3 _a = (a); \
        (vec3) { _x*_a.x, _x*_a.y, _x*_a.z }; })
+#define vmul3(a,b) \
+    ({ const vec3 _a = (a), _b = (b); \
+       (vec3) { _a.x * _b.x, _a.y * _b.y, _a.z * _b.z}; })
 #define vadd3(a,b) \
     ({ const vec3 _a = (a), _b = (b); \
        (vec3) { _a.x + _b.x, _a.y + _b.y, _a.z + _b.z}; })
