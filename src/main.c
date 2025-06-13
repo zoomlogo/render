@@ -36,11 +36,11 @@ i32 main(void) {
 
     // scene setup
     sphere_t spheres[] = {
-        (sphere_t) { (vec3) {-6, 4, 0}, 1, (material_t) { RED } },
-        (sphere_t) { (vec3) {0, 0, 0}, 2, (material_t) { GREEN } },
-        (sphere_t) { (vec3) {3, 5, 0}, 3, (material_t) { BLUE } },
-        (sphere_t) { (vec3) {6, 0, -5}, 2, (material_t) { CYAN } },
-        (sphere_t) { (vec3) {-5, -3, 1}, 2, (material_t) { YELLOW } },
+        (sphere_t) { (vec3) {0, -10, 0}, 10, (material_t) { RED } },
+        (sphere_t) { (vec3) {0, 2, 0}, 2, (material_t) { GREEN } },
+        (sphere_t) { (vec3) {-5, -0.25, 2}, 1, (material_t) { BLUE } },
+        (sphere_t) { (vec3) {5, -0.25, 2}, 1, (material_t) { CYAN } },
+        (sphere_t) { (vec3) {-20, 8, -10}, 4, (material_t) { YELLOW } },
     };
 
     // populate the buffer
@@ -51,7 +51,7 @@ i32 main(void) {
         vec3 dir = normalize3(vsub3(world_coords, camera.pos));
         ray_t ray = { world_coords, dir };
 
-        buffer[i] = trace(ray, spheres,  sizeof(spheres) / sizeof(sphere_t), 2);
+        buffer[i] = trace(ray, spheres,  sizeof(spheres) / sizeof(sphere_t), 1);
     }
 
     // write to output image
