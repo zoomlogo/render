@@ -26,3 +26,9 @@ vec3 rand_sphere(void) {
         cosf(phi)
     };
 }
+
+// for generating diffuse reflections
+vec3 rand_sphere_diffuse(vec3 normal) {
+    vec3 dir = rand_sphere();
+    return dot3(normal, dir) > 0 ? dir : fmul3(-1, dir);
+}

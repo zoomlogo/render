@@ -51,7 +51,7 @@ i32 main(void) {
         vec3 dir = normalize3(vsub3(world_coords, camera.pos));
         ray_t ray = { world_coords, dir };
 
-        buffer[i] = trace(ray, spheres,  sizeof(spheres) / sizeof(sphere_t), 0);
+        buffer[i] = trace(ray, spheres,  sizeof(spheres) / sizeof(sphere_t), 2);
     }
 
     // write to output image

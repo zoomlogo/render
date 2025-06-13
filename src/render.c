@@ -70,11 +70,28 @@ hitinfo_t get_closest_hit(ray_t ray, sphere_t *spheres, usize N) {
     return closest_hit;
 }
 
-rgb_t trace(ray_t ray, sphere_t *spheres, usize N, usize num_bounces) {
+rgb_t trace(ray_t original_ray, sphere_t *spheres, usize N, usize num_bounces) {
     vec3 colour = { 1, 1, 1 };
+    ray_t ray = original_ray;
+    usize i = 0;
 
-    hitinfo_t hit = get_closest_hit(ray, spheres, N);
-    colour = vmul3(colour, vec(hit.material.colour));
+    for (; i < num_bounces; i++) {
+        hitinfo_t hit = get_closest_hit(ray, spheres, N);
+        if (hit.did_hit) {
+            // TODO do math
+            // what need to do?
+            // just multiply the colours :P
+            colour = vmul3(colour, vec(hit.material.colour));
+
+            // bounce
+            ray.pos = hit.point;
+            ray.dir = rand_sphere_diffuse(hit.normal);
+        } else {
+            break;
+        }
+    }
+
+    if (i == 0) return BLACK;
 
     return rgb(colour);
 }
