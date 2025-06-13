@@ -53,3 +53,17 @@ hitinfo_t ray_sphere_intersection(ray_t ray, sphere_t sphere) {
 
     return hitinfo;
 }
+
+hitinfo_t get_closest_hit(ray_t ray, sphere_t *spheres, usize N) {
+    // loop over all spheres and return the closest one
+    hitinfo_t closest_hit = { false, INFINITY };
+    for (usize j = 0; j < N; j++) {
+        sphere_t sphere = spheres[j];
+        hitinfo_t hitinfo = ray_sphere_intersection(ray, sphere);
+
+        // depth checking
+        if (hitinfo.did_hit && min(hitinfo.dstA, closest_hit.dstA) != closest_hit.dstA)
+            closest_hit = hitinfo;
+    }
+    return closest_hit;
+}

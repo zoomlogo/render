@@ -53,15 +53,7 @@ i32 main(void) {
         ray_t ray = { world_coords, dir };
 
         // sphere checking
-        hitinfo_t closest_hit = { false, INFINITY };
-        for (usize j = 0; j < sizeof(spheres) / sizeof(sphere_t); j++) {
-            sphere_t sphere = spheres[j];
-            hitinfo_t hitinfo = ray_sphere_intersection(ray, sphere);
-
-            // depth checking
-            if (hitinfo.did_hit && min(hitinfo.dstA, closest_hit.dstA) != closest_hit.dstA)
-                closest_hit = hitinfo;
-        }
+        hitinfo_t closest_hit = get_closest_hit(ray, spheres, sizeof(spheres) / sizeof(sphere_t));
 
         // write colour to buffer
         if (closest_hit.did_hit)
