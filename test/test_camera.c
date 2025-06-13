@@ -20,7 +20,8 @@ void test_camera(void) {
     ASSERT(cam.fov == 90);
     ASSERT(cam.zNear == 4 && cam.zFar == INFINITY);
     ASSERT(cam.aspect_ratio == 1.5);
-    ASSERT(cam.width == 12 && cam.height == 8);
+    ASSERT(cam.width == 12);
+    ASSERT(cam.height == 8);
 
     // check if camera's matrix is correct or not
     bool assertion = true;

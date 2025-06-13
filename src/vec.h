@@ -2,6 +2,21 @@
 #include <math.h>
 #include "types.h"
 
+// math
+#define min(a,b) \
+    ({ const typeof(a) _a = (a); \
+       const typeof(b) _b = (b); \
+       _a > _b ? _b : _a; })
+#define max(a,b) \
+    ({ const typeof(a) _a = (a); \
+       const typeof(b) _b = (b); \
+       _a < _b ? _b : _a; })
+#define hclamp(m,M,x) \
+    ({ const typeof(x) _m = (m); \
+       const typeof(x) _M = (M); \
+       const typeof(x) _x = (x); \
+       max(min(_M, _x), _m); })
+
 // vec3, mat3:
 typedef struct { f32 x, y, z; } vec3;
 typedef struct { f32 v[9]; } mat3;

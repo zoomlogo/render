@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include "types.h"
+#include "vec.h"
 #include "ppm.h"
 
 rgb_t rgb(vec3 v) {

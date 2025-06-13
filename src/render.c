@@ -34,8 +34,6 @@ hitinfo_t ray_sphere_intersection(ray_t ray, sphere_t sphere) {
         } else if (t1 <= 0 && t2 <= 0) {
             // missed sphere
             hitinfo.did_hit = false;
-            t1 = INFINITY;
-            t2 = INFINITY;
         }
 
         hitinfo.dstA = t1;
@@ -44,11 +42,13 @@ hitinfo_t ray_sphere_intersection(ray_t ray, sphere_t sphere) {
         // calculate surface normal
         if (t1 != INFINITY) {
             vec3 intersection_point = vadd3(ray.pos, fmul3(t1, ray.dir));
+            hitinfo.point = intersection_point;
             hitinfo.normal = normalize3(vsub3(intersection_point, sphere.pos));
         }
+
+        hitinfo.material = sphere.material;
     } else {
         hitinfo.did_hit = false;
-        hitinfo.dstA = hitinfo.dstB = INFINITY;
     }
 
     return hitinfo;

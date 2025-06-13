@@ -3,20 +3,6 @@
 #include "types.h"
 #include "vec.h"
 
-#define min(a,b) \
-    ({ const typeof(a) _a = (a); \
-       const typeof(b) _b = (b); \
-       _a > _b ? _b : _a; })
-#define max(a,b) \
-    ({ const typeof(a) _a = (a); \
-       const typeof(b) _b = (b); \
-       _a < _b ? _b : _a; })
-#define hclamp(m,M,x) \
-    ({ const typeof(x) _m = (m); \
-       const typeof(x) _M = (M); \
-       const typeof(x) _x = (x); \
-       max(min(_M, _x), _m); })
-
 typedef struct { u8 r, g, b; } rgb_t;
 #define cprint(c) \
     ({ const rgb_t _c = (c); \

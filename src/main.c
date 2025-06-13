@@ -1,8 +1,11 @@
 #include <stdio.h>
+#include <stdlib.h>
+#include <time.h>
 
 #include "types.h"
 #include "camera.h"
 #include "render.h"
+#include "random.h"
 #include "vec.h"
 #include "ppm.h"
 
@@ -15,6 +18,9 @@
 
 i32 main(void) {
     rgb_t buffer[SCREEN_WIDTH * SCREEN_HEIGHT];
+
+    // set random
+    srand((u32) time(NULL));
 
     // camera setup
     camera_t camera = setup_camera(
@@ -47,22 +53,19 @@ i32 main(void) {
         ray_t ray = { world_coords, dir };
 
         // sphere checking
-        usize closest_sphere_i = 0;
-        f32 dst = INFINITY;
+        hitinfo_t closest_hit = { false, INFINITY };
         for (usize j = 0; j < sizeof(spheres) / sizeof(sphere_t); j++) {
             sphere_t sphere = spheres[j];
             hitinfo_t hitinfo = ray_sphere_intersection(ray, sphere);
 
             // depth checking
-            if (min(hitinfo.dstA, dst) != dst) {
-                dst = hitinfo.dstA;
-                closest_sphere_i = j;
-            }
+            if (hitinfo.did_hit && min(hitinfo.dstA, closest_hit.dstA) != closest_hit.dstA)
+                closest_hit = hitinfo;
         }
 
         // write colour to buffer
-        if (dst != INFINITY)
-            buffer[i] = spheres[closest_sphere_i].material.colour;
+        if (closest_hit.did_hit)
+            buffer[i] = closest_hit.material.colour;
     }
 
     // write to output image
