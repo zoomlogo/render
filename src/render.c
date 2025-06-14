@@ -93,10 +93,7 @@ vec3 trace(ray_t original_ray, sphere_t *spheres, usize N, usize num_bounces) {
             // bounce
             ray.pos = hit.point;
             // diffuse reflection
-            // ray.dir = normalize3(vadd3(hit.normal, rand_sphere()));
-            // check trick to generate specular reflection
-            vec3 reflected_dir = vadd3(ray.dir, fmul3(2, hit.normal));
-            ray.dir = normalize3(vadd3(reflected_dir, rand_sphere()));
+            ray.dir = normalize3(vadd3(hit.normal, rand_sphere()));
 
             material_t material = hit.material;
             // incoming light calculation
