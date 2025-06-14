@@ -90,12 +90,14 @@ vec3 trace(ray_t original_ray, sphere_t *spheres, usize N, usize num_bounces) {
     for (usize i = 0; i < num_bounces + 1; i++) {
         hitinfo_t hit = get_closest_hit(ray, spheres, N);
         if (hit.did_hit) {
+            material_t material = hit.material;
             // bounce
             ray.pos = hit.point;
-            // diffuse reflection
-            ray.dir = normalize3(vadd3(hit.normal, rand_sphere()));
+            // reflection
+            vec3 diffuse_dir = normalize3(vadd3(hit.normal, rand_sphere()));
+            vec3 specular_dir = vadd3(ray.dir, fmul3(2, hit.normal));
+            ray.dir = lerp(diffuse_dir, specular_dir, material.smoothness);
 
-            material_t material = hit.material;
             // incoming light calculation
             vec3 emitted_light = fmul3(material.emission_strength, material.emission_colour);
             incoming_light = vadd3(incoming_light, vmul3(emitted_light, ray_colour));

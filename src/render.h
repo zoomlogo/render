@@ -11,6 +11,7 @@ typedef struct material_t {
     vec3 colour;
     f32 emission_strength;
     vec3 emission_colour;
+    f32 smoothness;
 } material_t;
 
 typedef struct sphere_t {

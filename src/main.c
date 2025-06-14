@@ -38,14 +38,14 @@ i32 main(void) {
     // scene setup
     sphere_t spheres[] = {
         (sphere_t) { (vec3) {0, -1000, 0}, 1000, (material_t) { RED } },
-        (sphere_t) { (vec3) {0, 2, 0}, 2, (material_t) { GREEN } },
+        (sphere_t) { (vec3) {0, 2, 0}, 2, (material_t) { GREEN, 0, WHITE, 1 } },
         (sphere_t) { (vec3) {-3, 1, 1}, 1, (material_t) { BLUE } },
         (sphere_t) { (vec3) {3, 1, 1}, 1, (material_t) { CYAN } },
         (sphere_t) { (vec3) {-10, 8, -4}, 2, (material_t) { WHITE, 20, WHITE } },
     };
 
     // populate the buffer
-    const usize RAYS_PER_PIXEL = 1000;
+    const usize RAYS_PER_PIXEL = 16000;
     for (usize i = 0; i < SCREEN_HEIGHT * SCREEN_WIDTH; i++) {
         vec3 coords = i2v(i);
         vec3 world_coords = screen_to_world_coords(camera, coords);
@@ -61,7 +61,7 @@ i32 main(void) {
         vec3 colour = { 0, 0, 0 };
         for (usize j = 0; j < RAYS_PER_PIXEL; j++)
             colour = vadd3(colour,
-                trace(ray, spheres, sizeof(spheres) / sizeof(sphere_t), 5));
+                trace(ray, spheres, sizeof(spheres) / sizeof(sphere_t), 6));
 
         buffer[i] = fmul3(1 / (f32) RAYS_PER_PIXEL, colour);
     }
