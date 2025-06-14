@@ -1,6 +1,6 @@
 CC=clang
 # compiler flags
-FLAGS=-Wall -std=c23
+FLAGS=-Wall -std=c23 -O3
 
 # object file dependencies for target render:
 RENDER_DEPS := obj/main.o obj/vec.o obj/ppm.o

@@ -28,4 +28,5 @@ typedef struct hitinfo_t {
 
 hitinfo_t ray_sphere_intersection(ray_t ray, sphere_t sphere);
 hitinfo_t get_closest_hit(ray_t ray, sphere_t *spheres, usize N);
+vec3 get_environment_light(ray_t ray);
 vec3 trace(ray_t original_ray, sphere_t *spheres, usize N, usize num_bounces);

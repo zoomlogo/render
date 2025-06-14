@@ -70,6 +70,18 @@ hitinfo_t get_closest_hit(ray_t ray, sphere_t *spheres, usize N) {
     return closest_hit;
 }
 
+static vec3 lerp(vec3 a, vec3 b, f32 t) {
+    return vadd3(fmul3(1 - t, a), fmul3(t, b));
+}
+
+vec3 get_environment_light(ray_t ray) {
+    // #00adf2 sky blue (y more up)
+    // #7bd9f6 more near horizon
+    vec3 horizon_colour = { 0.4823529411764706f, 0.8509803921568627f, 0.9647058823529412f };
+    vec3 sky_colour = { 0.0f, 0.6784313725490196f, 0.9490196078431372f };
+    return lerp(horizon_colour, sky_colour, fabsf(ray.dir.y));
+}
+
 vec3 trace(ray_t original_ray, sphere_t *spheres, usize N, usize num_bounces) {
     vec3 ray_colour = { 1, 1, 1 };
     vec3 incoming_light = { 0, 0, 0 };
@@ -90,6 +102,7 @@ vec3 trace(ray_t original_ray, sphere_t *spheres, usize N, usize num_bounces) {
             ray_colour = vmul3(ray_colour, material.colour);
         } else {
             // TODO get env light here
+            incoming_light = vadd3(incoming_light, vmul3(get_environment_light(ray), ray_colour));
             break;
         }
     }

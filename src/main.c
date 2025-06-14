@@ -11,7 +11,7 @@
 
 #define SCREEN_WIDTH 480
 #define SCREEN_HEIGHT 320
-#define SETUP_SCENE_MODE true
+#define SETUP_SCENE_MODE false
 
 // buffer index to vec3 and vice versa
 #define i2v(i) ({ const usize _i = (i); (vec3) { _i%SCREEN_WIDTH, SCREEN_HEIGHT - _i/SCREEN_WIDTH - 1, 0 }; })
@@ -25,11 +25,11 @@ i32 main(void) {
 
     // camera setup
     camera_t camera = setup_camera(
-        (vec3) {0, 0, 10},  // pos
-        (vec3) {0, 0, -1},  // dir
+        (vec3) {0, 5, 15},  // pos
+        (vec3) {0, -0.3, -1},  // dir
         (vec3) {1, 0, 0},  // screen_x_dir
-        90,  // fov
-        4,  // zNear
+        60,  // fov
+        6,  // zNear
         SCREEN_WIDTH, SCREEN_HEIGHT
     );
     printf("width & height: ");
@@ -37,15 +37,15 @@ i32 main(void) {
 
     // scene setup
     sphere_t spheres[] = {
-        (sphere_t) { (vec3) {0, -10, 0}, 10, (material_t) { RED } },
+        (sphere_t) { (vec3) {0, -1000, 0}, 1000, (material_t) { RED } },
         (sphere_t) { (vec3) {0, 2, 0}, 2, (material_t) { GREEN } },
-        (sphere_t) { (vec3) {-5, -0.25, 2}, 1, (material_t) { BLUE } },
-        (sphere_t) { (vec3) {5, -0.25, 2}, 1, (material_t) { CYAN } },
-        (sphere_t) { (vec3) {-10, 6, -1}, 2, (material_t) { WHITE, 10, WHITE } },
+        (sphere_t) { (vec3) {-3, 1, 1}, 1, (material_t) { BLUE } },
+        (sphere_t) { (vec3) {3, 1, 1}, 1, (material_t) { CYAN } },
+        (sphere_t) { (vec3) {-10, 8, -4}, 2, (material_t) { WHITE, 20, WHITE } },
     };
 
     // populate the buffer
-    const usize RAYS_PER_PIXEL = 3000;
+    const usize RAYS_PER_PIXEL = 6000;
     for (usize i = 0; i < SCREEN_HEIGHT * SCREEN_WIDTH; i++) {
         vec3 coords = i2v(i);
         vec3 world_coords = screen_to_world_coords(camera, coords);
@@ -61,7 +61,7 @@ i32 main(void) {
         vec3 colour = { 0, 0, 0 };
         for (usize j = 0; j < RAYS_PER_PIXEL; j++)
             colour = vadd3(colour,
-                trace(ray, spheres, sizeof(spheres) / sizeof(sphere_t), 4));
+                trace(ray, spheres, sizeof(spheres) / sizeof(sphere_t), 5));
 
         buffer[i] = fmul3(1 / (f32) RAYS_PER_PIXEL, colour);
     }
