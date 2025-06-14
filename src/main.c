@@ -45,7 +45,7 @@ i32 main(void) {
     };
 
     // populate the buffer
-    const usize RAYS_PER_PIXEL = 100;
+    const usize RAYS_PER_PIXEL = 1000;
     for (usize i = 0; i < SCREEN_HEIGHT * SCREEN_WIDTH; i++) {
         vec3 coords = i2v(i);
         vec3 world_coords = screen_to_world_coords(camera, coords);
