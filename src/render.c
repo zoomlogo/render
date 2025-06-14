@@ -93,7 +93,7 @@ vec3 trace(ray_t original_ray, sphere_t *spheres, usize N, usize num_bounces) {
             // bounce
             ray.pos = hit.point;
             // diffuse reflection
-            ray.dir = rand_sphere_diffuse(hit.normal);
+            ray.dir = normalize3(vadd3(hit.normal, rand_sphere()));
 
             material_t material = hit.material;
             // incoming light calculation
@@ -101,7 +101,6 @@ vec3 trace(ray_t original_ray, sphere_t *spheres, usize N, usize num_bounces) {
             incoming_light = vadd3(incoming_light, vmul3(emitted_light, ray_colour));
             ray_colour = vmul3(ray_colour, material.colour);
         } else {
-            // TODO get env light here
             incoming_light = vadd3(incoming_light, vmul3(get_environment_light(ray), ray_colour));
             break;
         }
