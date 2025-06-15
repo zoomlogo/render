@@ -74,15 +74,18 @@ static vec3 lerp(vec3 a, vec3 b, f32 t) {
     return vadd3(fmul3(1 - t, a), fmul3(t, b));
 }
 
-vec3 get_environment_light(ray_t ray) {
-    // #00adf2 sky blue (y more up)
-    // #7bd9f6 more near horizon
-    vec3 horizon_colour = { 0.4823529411764706f, 0.8509803921568627f, 0.9647058823529412f };
-    vec3 sky_colour = { 0.0f, 0.6784313725490196f, 0.9490196078431372f };
-    return lerp(horizon_colour, sky_colour, fabsf(ray.dir.y));
+vec3 get_environment_light(ray_t ray, sun_t sun) {
+    const vec3 horizon_colour = WHITE;
+    const vec3 sky_colour = { 0.08f, 0.37f, 0.73f };
+
+    f32 sun_light = powf(max(0, dot3(ray.dir, sun.dir)), sun.focus) * sun.intensity;
+
+    vec3 net_light = lerp(horizon_colour, sky_colour, powf(fabsf(ray.dir.y), 0.38));
+    net_light = vadd3(net_light, fmul3(sun_light, sun.colour));
+    return net_light;
 }
 
-vec3 trace(ray_t original_ray, sphere_t *spheres, usize N, usize num_bounces) {
+vec3 trace(ray_t original_ray, sphere_t *spheres, usize N, sun_t sun, usize num_bounces) {
     vec3 ray_colour = { 1, 1, 1 };
     vec3 incoming_light = { 0, 0, 0 };
     ray_t ray = original_ray;
@@ -103,7 +106,7 @@ vec3 trace(ray_t original_ray, sphere_t *spheres, usize N, usize num_bounces) {
             incoming_light = vadd3(incoming_light, vmul3(emitted_light, ray_colour));
             ray_colour = vmul3(ray_colour, material.colour);
         } else {
-            incoming_light = vadd3(incoming_light, vmul3(get_environment_light(ray), ray_colour));
+            incoming_light = vadd3(incoming_light, vmul3(get_environment_light(ray, sun), ray_colour));
             break;
         }
     }
