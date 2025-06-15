@@ -28,18 +28,15 @@ hitinfo_t ray_sphere_intersection(ray_t ray, sphere_t sphere) {
         if (t1 <= 0 && t2 > 0) {
             // inside/on sphere
             t1 = fabsf(t2);
-            t2 = INFINITY;
         } else if (t1 > 0 && t2 <= 0) {
             // inside/on sphere
             t1 = fabsf(t1);
-            t2 = INFINITY;
         } else if (t1 <= 0 && t2 <= 0) {
             // missed sphere
             hitinfo.did_hit = false;
         }
 
-        hitinfo.dstA = t1;
-        hitinfo.dstB = t2;
+        hitinfo.dst = t1;
 
         // calculate surface normal
         if (t1 != INFINITY) {
@@ -64,7 +61,7 @@ hitinfo_t get_closest_hit(ray_t ray, sphere_t *spheres, usize N) {
         hitinfo_t hitinfo = ray_sphere_intersection(ray, sphere);
 
         // depth checking
-        if (hitinfo.did_hit && min(hitinfo.dstA, closest_hit.dstA) != closest_hit.dstA)
+        if (hitinfo.did_hit && min(hitinfo.dst, closest_hit.dst) != closest_hit.dst)
             closest_hit = hitinfo;
     }
     return closest_hit;

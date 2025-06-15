@@ -26,7 +26,7 @@ typedef struct sun_t {
 
 typedef struct hitinfo_t {
     bool did_hit;
-    f32 dstA, dstB;
+    f32 dst;
     vec3 normal; // surface normal at the point
     vec3 point; // point of ray hitting sphere
     material_t material;
