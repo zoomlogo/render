@@ -1,4 +1,9 @@
+# buildfiles
 obj/
 render
 out.ppm
 test_all
+
+# lsp (clangd)
+compile_commands.json
+.cache

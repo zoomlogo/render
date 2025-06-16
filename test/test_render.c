@@ -18,21 +18,19 @@ static void test_ray_sphere_intersection(void) {
     ray = (ray_t) { (vec3) {-1, -1, 0}, (vec3) {1, 0, 0} };
     hitinfo = ray_sphere_intersection(ray, sphere);
     ASSERT(hitinfo.did_hit == true);
-    ASSERT(hitinfo.dstA == hitinfo.dstB);
+    ASSERT(hitinfo.dst == 1);
     // ray hits sphere at 2 distinct points:
     sphere = (sphere_t) { (vec3) {0, 4, 0}, 2 };
     ray = (ray_t) { (vec3) {0, 0, 0}, (vec3) {0, 1, 0} };
     hitinfo = ray_sphere_intersection(ray, sphere);
     ASSERT(hitinfo.did_hit == true);
-    ASSERT(hitinfo.dstA == 2);
-    ASSERT(hitinfo.dstB == 6);
+    ASSERT(hitinfo.dst == 2);
     // ray originates from inside sphere
     sphere = (sphere_t) { (vec3) {0, 0, 0}, 2 };
     ray = (ray_t) { (vec3) {0, 0, 0}, (vec3) {0, 1, 0} };
     hitinfo = ray_sphere_intersection(ray, sphere);
     ASSERT(hitinfo.did_hit == true);
-    ASSERT(hitinfo.dstA == 2);
-    ASSERT(hitinfo.dstB == INFINITY);
+    ASSERT(hitinfo.dst == 2);
     // ray misses sphere (but lies on the line defined by ray)
     sphere = (sphere_t) { (vec3) {0, 2, 0}, 1 };
     ray = (ray_t) { (vec3) {0, 6, 0}, (vec3) {0, 1, 0} };
