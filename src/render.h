@@ -24,6 +24,14 @@ typedef struct triangle_t {
     material_t material;
 } triangle_t;
 
+typedef struct object_t {
+    bool is_triangle;
+    union {
+        sphere_t sphere;
+        triangle_t triangle;
+    };
+} object_t;
+
 typedef struct sun_t {
     vec3 dir, colour;
     f32 focus, intensity;
@@ -33,13 +41,13 @@ typedef struct hitinfo_t {
     bool did_hit;
     f32 dst;
     vec3 normal; // surface normal at the point
-    vec3 point; // point of ray hitting sphere
+    vec3 point; // point of intersection
     material_t material;
 } hitinfo_t;
 
 hitinfo_t ray_sphere_intersection(ray_t ray, sphere_t sphere);
 hitinfo_t ray_triangle_intersection(ray_t ray, triangle_t triangle);
 
-hitinfo_t get_closest_hit(ray_t ray, sphere_t *spheres, usize N);
+hitinfo_t get_closest_hit(ray_t ray, object_t *objects, usize N);
 vec3 get_environment_light(ray_t ray, sun_t sun);
-vec3 trace(ray_t original_ray, sphere_t *spheres, usize N, sun_t sun, usize num_bounces);
+vec3 trace(ray_t original_ray, object_t *objects, usize N, sun_t sun, usize num_bounces);

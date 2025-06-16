@@ -86,12 +86,16 @@ hitinfo_t ray_triangle_intersection(ray_t ray, triangle_t triangle) {
     return hitinfo;
 }
 
-hitinfo_t get_closest_hit(ray_t ray, sphere_t *spheres, usize N) {
-    // loop over all spheres and return the closest one
+hitinfo_t get_closest_hit(ray_t ray, object_t *objects, usize N) {
+    // loop over all objects and return the closest one
     hitinfo_t closest_hit = { false, INFINITY };
+    hitinfo_t hitinfo;
     for (usize j = 0; j < N; j++) {
-        sphere_t sphere = spheres[j];
-        hitinfo_t hitinfo = ray_sphere_intersection(ray, sphere);
+        object_t object = objects[j];
+        if (object.is_triangle)
+            hitinfo = ray_triangle_intersection(ray, object.triangle);
+        else
+            hitinfo = ray_sphere_intersection(ray, object.sphere);
 
         // depth checking
         if (hitinfo.did_hit && min(hitinfo.dst, closest_hit.dst) != closest_hit.dst)
@@ -115,13 +119,13 @@ vec3 get_environment_light(ray_t ray, sun_t sun) {
     return net_light;
 }
 
-vec3 trace(ray_t original_ray, sphere_t *spheres, usize N, sun_t sun, usize num_bounces) {
+vec3 trace(ray_t original_ray, object_t *objects, usize N, sun_t sun, usize num_bounces) {
     vec3 ray_colour = { 1, 1, 1 };
     vec3 incoming_light = { 0, 0, 0 };
     ray_t ray = original_ray;
 
     for (usize i = 0; i < num_bounces + 1; i++) {
-        hitinfo_t hit = get_closest_hit(ray, spheres, N);
+        hitinfo_t hit = get_closest_hit(ray, objects, N);
         if (hit.did_hit) {
             material_t material = hit.material;
             // bounce

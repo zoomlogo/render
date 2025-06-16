@@ -36,11 +36,16 @@ i32 main(void) {
     vprint3((vec3) {camera.width, camera.height, 0});
 
     // scene setup
-    sphere_t spheres[] = {
-        (sphere_t) { (vec3) {0, -1000, 0}, 1000, (material_t) { RED } },
-        (sphere_t) { (vec3) {0, 2, 0}, 2, (material_t) { GREEN } },
-        (sphere_t) { (vec3) {-3, 1, 1}, 1, (material_t) { BLUE } },
-        (sphere_t) { (vec3) {3, 1, 1}, 1, (material_t) { CYAN } },
+    object_t objects[] = {
+        (object_t) { false, {(sphere_t) { (vec3) {0, -1000, 0}, 1000, (material_t) { RED } }}},
+        (object_t) { false, {(sphere_t) { (vec3) {0, 2, 0}, 2, (material_t) { GREEN } }}},
+        (object_t) { false, {(sphere_t) { (vec3) {-3, 1, 1}, 1, (material_t) { BLUE } }}},
+        (object_t) { false, {(sphere_t) { (vec3) {3, 1, 1}, 1, (material_t) { CYAN } }}},
+        (object_t) { true, .triangle = {
+            (vec3) {5, 1, 0},
+            (vec3) {5, 4, -4},
+            (vec3) {10, 1, 3},
+            (material_t) { CYAN } }},
     };
 
     sun_t sun = { normalize3(((vec3) {-3, 4, -8})), WHITE, 100, 60 };
@@ -54,7 +59,7 @@ i32 main(void) {
         ray_t ray = { world_coords, dir };
 
         if (SETUP_SCENE_MODE) {
-            hitinfo_t hit = get_closest_hit(ray, spheres, sizeof(spheres) / sizeof(sphere_t));
+            hitinfo_t hit = get_closest_hit(ray, objects, sizeof(objects) / sizeof(object_t));
             buffer[i] = hit.did_hit ? hit.material.colour : (vec3) { 0, 0, 0 };
             continue;
         }
@@ -62,7 +67,7 @@ i32 main(void) {
         vec3 colour = { 0, 0, 0 };
         for (usize j = 0; j < RAYS_PER_PIXEL; j++)
             colour = vadd3(colour,
-                trace(ray, spheres, sizeof(spheres) / sizeof(sphere_t), sun, 8));
+                trace(ray, objects, sizeof(objects) / sizeof(object_t), sun, 4));
 
         buffer[i] = fmul3(1 / (f32) RAYS_PER_PIXEL, colour);
     }
