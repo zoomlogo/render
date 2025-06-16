@@ -38,10 +38,35 @@ static void test_ray_sphere_intersection(void) {
     ASSERT(hitinfo.did_hit == false);
 }
 
+void test_ray_triangle_intersection(void) {
+    triangle_t triangle;
+    ray_t ray;
+    hitinfo_t hitinfo;
+    // ray || triangle
+    triangle = (triangle_t) { (vec3) {0, 0, 0}, (vec3) {0, 1, 0}, (vec3) {1, 0, 0} };
+    ray = (ray_t) { (vec3) {0, 0, -1}, (vec3) {0, 1, 0} };
+    hitinfo = ray_triangle_intersection(ray, triangle);
+    ASSERT(hitinfo.did_hit == false);
+    // ray hits plane but not triangle
+    triangle = (triangle_t) { (vec3) {0, 0, 0}, (vec3) {0, 1, 0}, (vec3) {1, 0, 0} };
+    ray = (ray_t) { (vec3) {1, 1, -1}, (vec3) {0, 0, 1} };
+    hitinfo = ray_triangle_intersection(ray, triangle);
+    ASSERT(hitinfo.did_hit == false);
+    // ray hits triangle
+    triangle = (triangle_t) { (vec3) {0, 0, 0}, (vec3) {0, 1, 0}, (vec3) {1, 0, 0} };
+    ray = (ray_t) { (vec3) {0.2, 0.2, -1}, (vec3) {0, 0, 1} };
+    hitinfo = ray_triangle_intersection(ray, triangle);
+    ASSERT(hitinfo.did_hit == true);
+    ASSERT(hitinfo.dst == 1);
+    ASSERT(eql3(hitinfo.normal, ((vec3) {0, 0, -1})));
+    ASSERT(eql3(hitinfo.point, ((vec3) {0.2, 0.2, 0})));
+}
+
 void test_render(void) {
     BEGIN_TEST();
 
     test_ray_sphere_intersection();
+    test_ray_triangle_intersection();
 
     END_TEST();
 }

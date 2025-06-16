@@ -1,3 +1,5 @@
+#include <float.h>
+
 #include "types.h"
 #include "vec.h"
 #include "render.h"
@@ -50,6 +52,37 @@ hitinfo_t ray_sphere_intersection(ray_t ray, sphere_t sphere) {
         hitinfo.did_hit = false;
     }
 
+    return hitinfo;
+}
+
+hitinfo_t ray_triangle_intersection(ray_t ray, triangle_t triangle) {
+    // Möller-Trumbore intersection algorithm
+    hitinfo_t hitinfo = { false, INFINITY };
+
+    vec3 edge1 = vsub3(triangle.v2, triangle.v1);
+    vec3 edge2 = vsub3(triangle.v3, triangle.v1);
+    vec3 crossed2 = cross3(ray.dir, edge2);
+    f32 det = dot3(edge1, crossed2);
+
+    if (det > -FLT_EPSILON && det < FLT_EPSILON) return hitinfo;
+    f32 idet = 1 / det;
+    vec3 s = vsub3(ray.pos, triangle.v1);
+    f32 u = idet * dot3(s, crossed2);
+
+    if ((u < 0 && fabsf(u) > FLT_EPSILON) || (u > 1 && fabsf(u-1) > FLT_EPSILON)) return hitinfo;
+    vec3 crossed1 = cross3(s, edge1);
+    f32 v = idet * dot3(ray.dir, crossed1);
+
+    if ((v < 0 && fabsf(v) > FLT_EPSILON) || (u + v > 1 && fabsf(u + v - 1) > FLT_EPSILON)) return hitinfo;
+    f32 t = idet * dot3(edge2, crossed1);
+    if (t > FLT_EPSILON) {
+        hitinfo.did_hit = true;
+        hitinfo.dst = t;
+        hitinfo.material = triangle.material;
+        hitinfo.point = vadd3(ray.pos, fmul3(t, ray.dir));
+        vec3 normal = normalize3(cross3(edge1, edge2));
+        hitinfo.normal = dot3(normal, ray.dir) > 0 ? fmul3(-1, normal) : normal;
+    }
     return hitinfo;
 }
 
