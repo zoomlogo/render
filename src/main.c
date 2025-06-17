@@ -10,7 +10,7 @@
 
 #define SCREEN_WIDTH 1920
 #define SCREEN_HEIGHT 1080
-#define SETUP_SCENE_MODE false
+#define SETUP_SCENE_MODE true
 
 // buffer index to vec3 and vice versa
 #define i2v(i) ({ const usize _i = (i); (vec3) { _i%SCREEN_WIDTH, SCREEN_HEIGHT - _i/SCREEN_WIDTH - 1, 0 }; })
@@ -37,23 +37,23 @@ i32 main(void) {
     // scene setup
     object_t objects[] = {
         (object_t) { true, .triangle = {
-            (vec3) {100, 0, 100},
-            (vec3) {-100, 0, 100},
-            (vec3) {100, 0, -100},
+            &((vec3) {100, 0, 100}),
+            &((vec3) {-100, 0, 100}),
+            &((vec3) {100, 0, -100}),
             (material_t) { (vec3) {0.4, 0.5, 0.6 } }}},
         (object_t) { true, .triangle = {
-            (vec3) {-100, 0, 100},
-            (vec3) {100, 0, -100},
-            (vec3) {-100, 0, -100},
+            &((vec3) {-100, 0, 100}),
+            &((vec3) {100, 0, -100}),
+            &((vec3) {-100, 0, -100}),
             (material_t) { (vec3) {0.4, 0.5, 0.6 } }}},
         (object_t) { false, .sphere = {
             (vec3) {0, 2, 0}, 2, .material = { GREEN, .smoothness = 0.6, .specular_probability = 0.8, .specular_colour = WHITE } }},
         (object_t) { false, {(sphere_t) { (vec3) {-3, 1, 1}, 1, (material_t) { BLUE } }}},
         (object_t) { false, {(sphere_t) { (vec3) {3, 1, 1}, 1, (material_t) { CYAN } }}},
         (object_t) { true, .triangle = {
-            (vec3) {5, 1, 0},
-            (vec3) {5, 4, -4},
-            (vec3) {10, 1, 3},
+            &((vec3) {5, 1, 0}),
+            &((vec3) {5, 4, -4}),
+            &((vec3) {10, 1, 3}),
             (material_t) { CYAN } }},
     };
 

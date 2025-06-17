@@ -21,7 +21,7 @@ typedef struct sphere_t {
 } sphere_t;
 
 typedef struct triangle_t {
-    vec3 v1, v2, v3;
+    vec3 *v1, *v2, *v3;
     material_t material;
 } triangle_t;
 

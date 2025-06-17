@@ -60,14 +60,14 @@ hitinfo_t ray_triangle_intersection(ray_t ray, triangle_t triangle) {
     // Möller-Trumbore intersection algorithm
     hitinfo_t hitinfo = { false, INFINITY };
 
-    vec3 edge1 = vsub3(triangle.v2, triangle.v1);
-    vec3 edge2 = vsub3(triangle.v3, triangle.v1);
+    vec3 edge1 = vsub3(*triangle.v2, *triangle.v1);
+    vec3 edge2 = vsub3(*triangle.v3, *triangle.v1);
     vec3 crossed2 = cross3(ray.dir, edge2);
     f32 det = dot3(edge1, crossed2);
 
     if (det > -FLT_EPSILON && det < FLT_EPSILON) return hitinfo;
     f32 idet = 1 / det;
-    vec3 s = vsub3(ray.pos, triangle.v1);
+    vec3 s = vsub3(ray.pos, *triangle.v1);
     f32 u = idet * dot3(s, crossed2);
 
     if ((u < 0 && fabsf(u) > FLT_EPSILON) || (u > 1 && fabsf(u-1) > FLT_EPSILON)) return hitinfo;
