@@ -1,7 +1,6 @@
 #pragma once
 #include "types.h"
 #include "vec.h"
-#include "ppm.h"
 
 typedef struct ray_t {
     vec3 pos, dir;
@@ -12,6 +11,8 @@ typedef struct material_t {
     f32 emission_strength;
     vec3 emission_colour;
     f32 smoothness;
+    f32 specular_probability;
+    vec3 specular_colour;
 } material_t;
 
 typedef struct sphere_t {

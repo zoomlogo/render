@@ -5,7 +5,6 @@
 #include "types.h"
 #include "camera.h"
 #include "render.h"
-#include "random.h"
 #include "vec.h"
 #include "ppm.h"
 
@@ -37,8 +36,18 @@ i32 main(void) {
 
     // scene setup
     object_t objects[] = {
-        (object_t) { false, {(sphere_t) { (vec3) {0, -1000, 0}, 1000, (material_t) { RED } }}},
-        (object_t) { false, {(sphere_t) { (vec3) {0, 2, 0}, 2, (material_t) { GREEN } }}},
+        (object_t) { true, .triangle = {
+            (vec3) {100, 0, 100},
+            (vec3) {-100, 0, 100},
+            (vec3) {100, 0, -100},
+            (material_t) { (vec3) {0.4, 0.5, 0.6 } }}},
+        (object_t) { true, .triangle = {
+            (vec3) {-100, 0, 100},
+            (vec3) {100, 0, -100},
+            (vec3) {-100, 0, -100},
+            (material_t) { (vec3) {0.4, 0.5, 0.6 } }}},
+        (object_t) { false, .sphere = {
+            (vec3) {0, 2, 0}, 2, .material = { GREEN, .smoothness = 0.6, .specular_probability = 0.8, .specular_colour = WHITE } }},
         (object_t) { false, {(sphere_t) { (vec3) {-3, 1, 1}, 1, (material_t) { BLUE } }}},
         (object_t) { false, {(sphere_t) { (vec3) {3, 1, 1}, 1, (material_t) { CYAN } }}},
         (object_t) { true, .triangle = {
@@ -51,7 +60,7 @@ i32 main(void) {
     sun_t sun = { normalize3(((vec3) {-3, 4, -8})), WHITE, 100, 60 };
 
     // populate the buffer
-    const usize RAYS_PER_PIXEL = 100;
+    const usize RAYS_PER_PIXEL = 10;
     for (usize i = 0; i < SCREEN_HEIGHT * SCREEN_WIDTH; i++) {
         vec3 coords = i2v(i);
         vec3 world_coords = screen_to_world_coords(camera, coords);
