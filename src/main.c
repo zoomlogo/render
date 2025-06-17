@@ -9,8 +9,8 @@
 #include "vec.h"
 #include "ppm.h"
 
-#define SCREEN_WIDTH 480
-#define SCREEN_HEIGHT 320
+#define SCREEN_WIDTH 1920
+#define SCREEN_HEIGHT 1080
 #define SETUP_SCENE_MODE false
 
 // buffer index to vec3 and vice versa
@@ -18,7 +18,7 @@
 #define v2i(v) ({ const vec3 _v = (v); (usize) ((SCREEN_HEIGHT - _v.y - 1) * SCREEN_WIDTH + _v.x); })
 
 i32 main(void) {
-    vec3 buffer[SCREEN_WIDTH * SCREEN_HEIGHT];
+    vec3 *buffer = (vec3 *) malloc(SCREEN_WIDTH * SCREEN_HEIGHT * sizeof(vec3));
 
     // set random
     srand((u32) time(NULL));
@@ -76,6 +76,7 @@ i32 main(void) {
     FILE *fp = fopen("out.ppm", "w");
     ppm(fp, buffer, SCREEN_WIDTH, SCREEN_HEIGHT);
     fclose(fp);
+    free(buffer);
 
     return 0;
 }
