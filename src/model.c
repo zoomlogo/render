@@ -12,35 +12,33 @@ model_t *load_model(FILE *file) {
     model->N_triangles = 0;
     // load the model
     // only support 'v', 'o', 'f'.
-    bool name_flag = false;
+    bool o_flag = false;
     bool v_flag = false;
+    bool f_flag = false;
 
     char name[16];
-    usize i;
+    usize i = 0;
 
     // we need a dynamic buffer for vertices
     vec3 vertex;  // write here, copy to mem later
     usize vbytes_alloc = 16; // number of bytes allocated for vbuf
     vec3 *vbuf = (vec3 *) malloc(sizeof(vec3) * vbytes_alloc);
 
+    // reading faces is more complicated
+
     i32 c;
     while ((c = getc(file)) != EOF) {
         // read name, easy to understand
-        if (c == 'o')
-            name_flag = true;
-        if (name_flag && c == ' ') {
-            i = 0;
-            while ((c = getc(file)) != '\n') {
-                name[i++] = c;
-            }
+        if (c == 'o') o_flag = true;
+        if (o_flag && c == ' ' && i == 0) {
+            while ((c = getc(file)) != '\n') name[i++] = c;
             name[i] = '\0';
-            name_flag = false;
+            o_flag = false;
         }
 
         // read vertex
-        if (c == 'v') {
-            v_flag = true;
-        } else if (v_flag && c == ' ') {
+        if (c == 'v') v_flag = true;
+        else if (v_flag && c == ' ') {
             v_flag = false;
             fscanf(file, "%f %f %f", &(vertex.x), &(vertex.y), &(vertex.z));
             memcpy(&(vbuf[model->N_vertices++]), &vertex, sizeof(vec3));
@@ -49,17 +47,17 @@ model_t *load_model(FILE *file) {
                 vbytes_alloc *= 2;
                 vbuf = realloc(vbuf, vbytes_alloc);
             }
-        } else {
-            v_flag = false;
-        }
+        } else v_flag = false;
+
+        // read face
+        if (c == 'f') f_flag = true;
     }
 
     model->name = strdup(name);
     model->vertices = (vec3 *) malloc(sizeof(vec3) * model->N_vertices);
     memcpy(model->vertices, vbuf, sizeof(vec3) * model->N_vertices);
-
-    // free memory
     free(vbuf);
+
     return model;
 }
 

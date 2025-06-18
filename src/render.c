@@ -147,5 +147,7 @@ vec3 trace(ray_t original_ray, object_t *objects, usize N, sun_t sun, usize num_
         }
     }
 
+    // TODO speed this code up by implementiny
+    // direct light sampling
     return incoming_light;
 }
