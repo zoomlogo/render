@@ -16,21 +16,25 @@ model_t *load_model(FILE *file, material_t material) {
     model->N_vertices = 0;
     model->N_triangles = 0;
     // load the model
-    // only support 'v', 'o', 'f'.
+    // NOTE only supports 'v', 'o', 'f'.
     bool o_flag = false;
     bool v_flag = false;
     bool f_flag = false;
 
+    // NOTE name cannot be more than 15 characters long
+    // (last character being reserved for the null byte)
     char name[16];
     usize i = 0;
 
     // we need a dynamic buffer for vertices
-    vec3 vertex;  // write here, copy to mem later
-    usize v_alloc = 16; // number of vec3 allocated for vbuf
+    vec3 vertex;
+    usize v_alloc = 16;
     vec3 *vbuf = (vec3 *) malloc(sizeof(vec3) * v_alloc);
 
     // reading faces is slightly complicated
-    usize vertex_indicies[16]; // pray no more than 16 vertices per face
+    // theoretically we need 2 dynamic buffers but 1 is enough for us
+    // NOTE there cannot be more than 16 vertices per face
+    usize vertex_indicies[16];
     usize j;
     i32 vindex, vx, vxx;
     struct face_t face;
@@ -52,13 +56,14 @@ model_t *load_model(FILE *file, material_t material) {
         // read vertex
         if (c == 'v') v_flag = true;
         else if (v_flag && c == ' ') {
+            // NOTE only 3d verticies are supported (no x y z w)
             v_flag = false;
             fscanf(file, "%f %f %f", &(vertex.x), &(vertex.y), &(vertex.z));
             memcpy(&vbuf[model->N_vertices++], &vertex, sizeof(vec3));
             // expand buffer if we exceed limits
-            if (model->N_vertices > v_alloc) {
+            if (model->N_vertices >= v_alloc) {
                 v_alloc *= 2;
-                vbuf = realloc(vbuf, v_alloc);
+                vbuf = realloc(vbuf, sizeof(vec3) * v_alloc);
             }
         } else v_flag = false;
 
@@ -69,19 +74,26 @@ model_t *load_model(FILE *file, material_t material) {
             j = 0;
             // read the vertex indicies into vertex_indicies
             while (fscanf(file, "%d/%d/%d", &vindex, &vx, &vxx) == 3)
-                vertex_indicies[j++] = vindex - 1; // XXX what about negative indicies?
+                // NOTE negative vertex indicies are not handled.
+                // other formats are not handled (x//x or only x)
+                vertex_indicies[j++] = vindex - 1;
             face.vertex_count = j;
-            if (face.vertex_count == 0) printf("WHAT THE FUCK!");
             model->N_triangles += j - 2;
             face.vertex_indicies = (usize *) malloc(sizeof(usize) * j);
             memcpy(face.vertex_indicies, &vertex_indicies, sizeof(usize) * j);
 
             // expand the fbuf array with face
             memcpy(&fbuf[f_num++], &face, sizeof(struct face_t));
-            if (f_num > f_alloc) {
+            if (f_num >= f_alloc) {
                 f_alloc *= 2;
-                fbuf = realloc(fbuf, f_alloc);
+                fbuf = realloc(fbuf, sizeof(struct face_t) * f_alloc);
             }
+            // NOTE why that memory corruption?
+            // 1. realloc was earlier called with new_size = f_alloc
+            // which is not enough memory at all.
+            // 2. the bounds (the if statement: if (f_num > f_alloc))
+            // was wrong. it should be >= not >
+            // 3. same mistakes were make in the vertex processing code
         }
     }
 
@@ -95,19 +107,14 @@ model_t *load_model(FILE *file, material_t material) {
     usize k = 0;
     for (i = 0; i < f_num; i++) {
         face = fbuf[i];
-    printf("dbg i=%lu\n", i);
-    printf("dbg face(vc=%lu, viptr=%lu)\n", face.vertex_count, face.vertex_indicies);
-    // XXX MEMORY CORRUPTION IS HAPPENING SOMEWHERE HERE??
         usize pivot_index = face.vertex_indicies[0];
-        for (j = 1; j < face.vertex_count - 1; j++) {
-    printf("> dbg j=%lu\n", j);
+        for (j = 1; j < face.vertex_count - 1; j++)
             model->triangles[k++] = (triangle_t) {
                 &model->vertices[pivot_index],
                 &model->vertices[face.vertex_indicies[j]],
                 &model->vertices[face.vertex_indicies[j + 1]],
                 material
             };
-        }
         free(face.vertex_indicies);
     }
     free(fbuf);

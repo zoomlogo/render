@@ -36,13 +36,16 @@ static void test_model_loading_knight(void) {
     fclose(file);
 
     ASSERT(strcmp(model->name, "Knight") == 0);
+    ASSERT(model->N_vertices == 235);
+    ASSERT(model->N_triangles == 456);
+    ASSERT(eql3(model->triangles[0].material.colour, GREEN));
+    destroy_model(model);
 }
 
 void test_model(void) {
     BEGIN_TEST();
 
     test_model_loading_cube();
-    printf("-------------\n");
     test_model_loading_knight();
 
     END_TEST();
