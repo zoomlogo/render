@@ -13,5 +13,8 @@ typedef struct model_t {
 } model_t;
 
 model_t *load_model(FILE *file, material_t material);
-// void transform_model(model_t *model, mat4 mat);
 void destroy_model(model_t *model);
+
+void translate_model(model_t *model, vec3 pos);
+void scale_model(model_t *model, vec3 scale);
+void rotate_model(model_t *model, vec3 axis, f32 angle);

@@ -46,6 +46,10 @@ typedef struct hitinfo_t {
     material_t material;
 } hitinfo_t;
 
+typedef struct scene_t {
+    // TODO
+} scene_t;
+
 hitinfo_t ray_sphere_intersection(ray_t ray, sphere_t sphere);
 hitinfo_t ray_triangle_intersection(ray_t ray, triangle_t triangle);
 

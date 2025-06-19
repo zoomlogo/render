@@ -127,3 +127,26 @@ void destroy_model(model_t *model) {
     free(model->vertices);
     free(model);
 }
+
+void translate_model(model_t *model, vec3 pos) {
+    for (usize i = 0; i < model->N_vertices; i++)
+        model->vertices[i] = vadd3(model->vertices[i], pos);
+}
+
+void scale_model(model_t *model, vec3 scale) {
+    for (usize i = 0; i < model->N_vertices; i++)
+        model->vertices[i] = vmul3(model->vertices[i], scale);
+}
+
+void rotate_model(model_t *model, vec3 axis, f32 angle) {
+    f32 cs = cosf(angle * M_PI / 180);
+    f32 sn = sinf(angle * M_PI / 180);
+    f32 x = axis.x, y = axis.y, z = axis.z;
+    mat3 matrix = {{
+        x*x*(1-cs)+cs, y*x*(1-cs)-z*sn, z*x*(1-cs)+y*sn,
+        x*y*(1-cs)+z*sn, y*y*(1-cs)+cs, z*y*(1-cs)-x*sn,
+        x*z*(1-cs)-y*sn, y*z*(1-cs)+x*sn, z*z*(1-cs)+cs
+    }};
+    for (usize i = 0; i < model->N_vertices; i++)
+        model->vertices[i] = mvmul3(matrix, model->vertices[i]);
+}
