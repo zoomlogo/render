@@ -12,6 +12,6 @@ typedef struct model_t {
     triangle_t *triangles;
 } model_t;
 
-model_t *load_model(FILE *file);
+model_t *load_model(FILE *file, material_t material);
 // void transform_model(model_t *model, mat4 mat);
 void destroy_model(model_t *model);
