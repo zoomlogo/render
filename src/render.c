@@ -1,3 +1,4 @@
+#include <stdlib.h>
 #include <math.h>
 #include <float.h>
 
@@ -7,6 +8,58 @@
 #include "random.h"
 #include "ppm.h"
 
+// scene handling
+scene_t *new_scene(void) {
+    scene_t *scene = (scene_t *) malloc(sizeof(scene_t));
+    scene->_m_alloc = 4;
+    scene->_o_alloc = 4;
+
+    scene->num_models = 0;
+    scene->num_objects = 0;
+
+    scene->models = (model_t *) malloc(sizeof(model_t) * scene->_m_alloc);
+    scene->objects = (object_t *) malloc(sizeof(object_t) * scene->_o_alloc);
+
+    return scene;
+}
+
+void scene_setup_sun(scene_t *scene, vec3 dir, vec3 colour, f32 focus, f32 intensity) {
+    scene->sun = (sun_t) {dir, colour, focus, intensity};
+}
+
+void scene_add_sphere(scene_t *scene, sphere_t sphere) {
+    object_t object = {false, .sphere = sphere};
+    scene->objects[scene->num_objects++] = object;
+    if (scene->num_objects >= scene->_o_alloc) {
+        scene->_o_alloc *= 2;
+        scene->objects = realloc(scene->objects, sizeof(object_t) * scene->_o_alloc);
+    }
+}
+
+void scene_add_triangle(scene_t *scene, triangle_t triangle) {
+    object_t object = {true, .triangle = triangle};
+    scene->objects[scene->num_objects++] = object;
+    if (scene->num_objects >= scene->_o_alloc) {
+        scene->_o_alloc *= 2;
+        scene->objects = realloc(scene->objects, sizeof(object_t) * scene->_o_alloc);
+    }
+}
+
+void scene_add_model(scene_t *scene, model_t model) {
+    scene->models[scene->num_models++] = model;
+    if (scene->num_models >= scene->_m_alloc) {
+        scene->_m_alloc *= 2;
+        scene->models = realloc(scene->models, sizeof(model_t) * scene->_m_alloc);
+    }
+}
+
+void del_scene(scene_t *scene) {
+    free(scene->models);
+    free(scene->objects);
+    free(scene);
+}
+
+// ray tracing functions
 hitinfo_t get_closest_hit(ray_t ray, object_t *objects, usize N) {
     // loop over all objects and return the closest one
     hitinfo_t closest_hit = { false, INFINITY };

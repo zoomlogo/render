@@ -23,11 +23,10 @@ typedef struct scene_t {
 
 // scene related functions
 scene_t *new_scene(void);
-void scene_setup_camera(scene_t *scene /**/);
-void scene_setup_sun(scene_t *scene /**/);
-void scene_add_sphere(scene_t *scene /**/);
-void scene_add_triangle(scene_t *scene /**/);
-void scene_add_model(scene_t *scene /**/);
+void scene_setup_sun(scene_t *scene, vec3 dir, vec3 colour, f32 focus, f32 intensity);
+void scene_add_sphere(scene_t *scene, sphere_t sphere);
+void scene_add_triangle(scene_t *scene, triangle_t triangle);
+void scene_add_model(scene_t *scene, model_t model);
 void del_scene(scene_t *scene);
 
 // raytracing

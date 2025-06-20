@@ -18,7 +18,7 @@ i32 main(void) {
     test_random();
     test_camera();
     test_object();
-    test_render();
     test_model();
+    test_render();
     return 0;
 }
