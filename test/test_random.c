@@ -1,3 +1,4 @@
+#include <stdlib.h>
 #include "util.h"
 #include "../src/types.h"
 #include "../src/vec.h"

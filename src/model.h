@@ -2,7 +2,7 @@
 #include <stdio.h>
 
 #include "vec.h"
-#include "render.h"
+#include "object.h"
 
 typedef struct model_t {
     char *name;

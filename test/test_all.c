@@ -7,6 +7,7 @@
 #include "test_render.h"
 #include "test_random.h"
 #include "test_model.h"
+#include "test_object.h"
 
 usize test_num = 0;
 usize passed = 0;
@@ -16,8 +17,8 @@ i32 main(void) {
     test_ppm();
     test_random();
     test_camera();
+    test_object();
     test_render();
     test_model();
-
     return 0;
 }

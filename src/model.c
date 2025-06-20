@@ -3,7 +3,7 @@
 #include <string.h>
 
 #include "vec.h"
-#include "render.h"
+#include "object.h"
 #include "model.h"
 
 struct face_t {

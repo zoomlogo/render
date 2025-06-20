@@ -4,13 +4,13 @@ FLAGS=-Wall -std=c23 -O3
 
 # object file dependencies for target render:
 RENDER_DEPS := obj/main.o obj/vec.o obj/ppm.o obj/model.o
-RENDER_DEPS += obj/camera.o obj/render.o obj/random.o
+RENDER_DEPS += obj/camera.o obj/render.o obj/random.o obj/object.o
 
 # unit testing object file dependencies
-TEST_DEPS := obj/vec.o obj/ppm.o obj/model.o
+TEST_DEPS := obj/vec.o obj/ppm.o obj/model.o obj/object.o
 TEST_DEPS += obj/camera.o obj/render.o obj/random.o
 TEST_DEPS += obj/test_all.o obj/test_vec.o obj/test_ppm.o obj/test_model.o
-TEST_DEPS += obj/test_camera.o obj/test_render.o obj/test_random.o
+TEST_DEPS += obj/test_camera.o obj/test_render.o obj/test_random.o obj/test_object.o
 
 render: $(RENDER_DEPS)
 	$(CC) $(FLAGS) -lm $(RENDER_DEPS) -o render
@@ -40,6 +40,9 @@ obj/random.o: src/random.c src/random.h
 obj/model.o: src/model.c src/model.h
 	$(CC) -c $(FLAGS) src/model.c -o obj/model.o
 
+obj/object.o: src/object.c src/object.h
+	$(CC) -c $(FLAGS) src/object.c -o obj/object.o
+
 # test:
 obj/test_all.o: test/test_all.c
 	$(CC) -c $(FLAGS) test/test_all.c -o obj/test_all.o
@@ -61,6 +64,9 @@ obj/test_random.o: test/test_random.c test/test_random.h
 
 obj/test_model.o: test/test_model.c test/test_model.h
 	$(CC) -c $(FLAGS) test/test_model.c -o obj/test_model.o
+
+obj/test_object.o: test/test_object.c test/test_object.h
+	$(CC) -c $(FLAGS) test/test_object.c -o obj/test_object.o
 
 # misc:
 clean:
