@@ -5,6 +5,7 @@
 #include "types.h"
 #include "camera.h"
 #include "render.h"
+#include "model.h"
 #include "vec.h"
 #include "ppm.h"
 
@@ -49,22 +50,6 @@ i32 main(void) {
             &((vec3) {-100, 0, -100}),
             (material_t) { (vec3) {0.4, 0.5, 0.6 } }
     });
-    scene_add_triangle(scene, (triangle_t) {
-            &((vec3) {5, 1, 0}),
-            &((vec3) {5, 4, -4}),
-            &((vec3) {10, 1, 3}),
-            (material_t) { CYAN }
-    });
-    scene_add_sphere(scene, (sphere_t) {
-        (vec3) {0, 2, 0},
-        2,
-        (material_t) {
-            GREEN,
-            .smoothness = 0.6,
-            .specular_probability = 0.8,
-            .specular_colour = WHITE
-        }
-    });
     scene_add_sphere(scene, (sphere_t) {
         (vec3) {-3, 1, 1},
         1,
@@ -75,6 +60,16 @@ i32 main(void) {
         1,
         (material_t) { CYAN }
     });
+
+    // load knight
+    FILE *knight_file = fopen("modal/Knight.obj", "r");
+    model_t *knight = load_model(knight_file, (material_t) { RED });
+    fclose(knight_file);
+
+    scale_model(knight, (vec3) {1.5, 1.5, 1.5});
+    rotate_model(knight, (vec3) {0, 1, 0}, 270);
+
+    scene_add_model(scene, *knight);
 
 
     // populate the buffer
@@ -102,7 +97,11 @@ i32 main(void) {
     FILE *fp = fopen("out.ppm", "w");
     ppm(fp, buffer, SCREEN_WIDTH, SCREEN_HEIGHT);
     fclose(fp);
+
+    // del
     free(buffer);
+    del_scene(scene);
+    destroy_model(knight);
 
     return 0;
 }
