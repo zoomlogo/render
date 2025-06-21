@@ -24,7 +24,7 @@ scene_t *new_scene(void) {
 }
 
 void scene_setup_sun(scene_t *scene, vec3 dir, vec3 colour, f32 focus, f32 intensity) {
-    scene->sun = (sun_t) {dir, colour, focus, intensity};
+    scene->sun = (sun_t) {normalize3(dir), colour, focus, intensity};
 }
 
 void scene_add_sphere(scene_t *scene, sphere_t sphere) {
@@ -135,7 +135,7 @@ vec3 trace(ray_t original_ray, scene_t scene, usize num_bounces) {
         }
     }
 
-    // TODO speed this code up by implementiny
+    // TODO speed this code up by implementing
     // direct light sampling
     return incoming_light;
 }
