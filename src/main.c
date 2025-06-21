@@ -11,7 +11,9 @@
 
 #define SCREEN_WIDTH 1920
 #define SCREEN_HEIGHT 1080
-#define SETUP_SCENE_MODE true
+#define SETUP_SCENE_MODE false
+
+// TODO BVH, DLS and more optimizations
 
 // buffer index to vec3 and vice versa
 #define i2v(i) ({ const usize _i = (i); (vec3) { _i%SCREEN_WIDTH, SCREEN_HEIGHT - _i/SCREEN_WIDTH - 1, 0 }; })
