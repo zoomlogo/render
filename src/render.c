@@ -60,12 +60,18 @@ void del_scene(scene_t *scene) {
 }
 
 // ray tracing functions
-hitinfo_t get_closest_hit(ray_t ray, object_t *objects, usize N) {
-    // loop over all objects and return the closest one
+static vec3 lerp(vec3 a, vec3 b, f32 t) {
+    return vadd3(fmul3(1 - t, a), fmul3(t, b));
+}
+
+hitinfo_t get_closest_hit(ray_t ray, scene_t scene) {
+    // loop over all objects in scene and return the closest one
     hitinfo_t closest_hit = { false, INFINITY };
     hitinfo_t hitinfo;
-    for (usize j = 0; j < N; j++) {
-        object_t object = objects[j];
+
+    // objects
+    for (usize j = 0; j < scene.num_objects; j++) {
+        object_t object = scene.objects[j];
         if (object.is_triangle)
             hitinfo = ray_triangle_intersection(ray, object.triangle);
         else
@@ -75,11 +81,20 @@ hitinfo_t get_closest_hit(ray_t ray, object_t *objects, usize N) {
         if (hitinfo.did_hit && min(hitinfo.dst, closest_hit.dst) != closest_hit.dst)
             closest_hit = hitinfo;
     }
-    return closest_hit;
-}
 
-static vec3 lerp(vec3 a, vec3 b, f32 t) {
-    return vadd3(fmul3(1 - t, a), fmul3(t, b));
+    // models
+    for (usize i = 0; i < scene.num_models; i++) {
+        model_t model = scene.models[i];
+        // loop over all triangles in model
+        for (usize j = 0; j < model.N_triangles; j++) {
+            hitinfo = ray_triangle_intersection(ray, model.triangles[j]);
+
+            // depth checking
+            if (hitinfo.did_hit && min(hitinfo.dst, closest_hit.dst) != closest_hit.dst)
+                closest_hit = hitinfo;
+        }
+    }
+    return closest_hit;
 }
 
 vec3 get_environment_light(ray_t ray, sun_t sun) {
@@ -93,13 +108,13 @@ vec3 get_environment_light(ray_t ray, sun_t sun) {
     return net_light;
 }
 
-vec3 trace(ray_t original_ray, object_t *objects, usize N, sun_t sun, usize num_bounces) {
+vec3 trace(ray_t original_ray, scene_t scene, usize num_bounces) {
     vec3 ray_colour = { 1, 1, 1 };
     vec3 incoming_light = { 0, 0, 0 };
     ray_t ray = original_ray;
 
     for (usize i = 0; i < num_bounces + 1; i++) {
-        hitinfo_t hit = get_closest_hit(ray, objects, N);
+        hitinfo_t hit = get_closest_hit(ray, scene);
         if (hit.did_hit) {
             material_t material = hit.material;
             // bounce
@@ -115,7 +130,7 @@ vec3 trace(ray_t original_ray, object_t *objects, usize N, sun_t sun, usize num_
             incoming_light = vadd3(incoming_light, vmul3(emitted_light, ray_colour));
             ray_colour = vmul3(ray_colour, lerp(material.colour, material.specular_colour, is_specular_bounce));
         } else {
-            incoming_light = vadd3(incoming_light, vmul3(get_environment_light(ray, sun), ray_colour));
+            incoming_light = vadd3(incoming_light, vmul3(get_environment_light(ray, scene.sun), ray_colour));
             break;
         }
     }
