@@ -32,6 +32,10 @@ vec3 rand_sphere_cosine(vec3 normal) {
     return normalize3(vadd3(normal, rand_sphere()));
 }
 
+vec3 rand_sphere_cosine2(vec3 normal, f32 w) {
+    return normalize3(vadd3(fmul3(w, normal), rand_sphere()));
+}
+
 // for generating diffuse reflections
 vec3 rand_sphere_diffuse(vec3 normal) {
     vec3 dir = rand_sphere();

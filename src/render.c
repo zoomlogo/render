@@ -113,8 +113,9 @@ vec3 trace(ray_t original_ray, scene_t scene, usize num_bounces) {
     vec3 incoming_light = { 0, 0, 0 };
     ray_t ray = original_ray;
 
+    hitinfo_t hit;
     for (usize i = 0; i < num_bounces + 1; i++) {
-        hitinfo_t hit = get_closest_hit(ray, scene);
+        hit = get_closest_hit(ray, scene);
         if (hit.did_hit) {
             material_t material = hit.material;
             // bounce
@@ -134,13 +135,19 @@ vec3 trace(ray_t original_ray, scene_t scene, usize num_bounces) {
             vec3 emitted_light = fmul3(material.emission_strength, material.emission_colour);
             incoming_light = vadd3(incoming_light, vmul3(emitted_light, ray_colour));
             ray_colour = vmul3(ray_colour, lerp(material.colour, material.specular_colour, is_specular_bounce));
+
+            // hacky dls
+            ray_t ghost_ray = { hit.point, rand_sphere_cosine2(scene.sun.dir, 4) };
+            hitinfo_t ghost_hit = get_closest_hit(ghost_ray, scene);
+            if (!ghost_hit.did_hit)
+                incoming_light = vadd3(incoming_light, vmul3(get_environment_light(ray, scene.sun), ray_colour));
         } else {
             incoming_light = vadd3(incoming_light, vmul3(get_environment_light(ray, scene.sun), ray_colour));
+            if (i != 0) // && ray.dir != ghost_ray.dir)
+                incoming_light = fmul3(0.5, incoming_light);
             break;
         }
     }
 
-    // TODO speed this code up by implementing
-    // direct light sampling
     return incoming_light;
 }
