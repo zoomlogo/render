@@ -119,8 +119,13 @@ vec3 trace(ray_t original_ray, scene_t scene, usize num_bounces) {
             material_t material = hit.material;
             // bounce
             ray.pos = hit.point;
+
+            // skip calculation if hit point is same as ray origin
+            // to account for numerical error
+            if (hit.dst < 0.000001) continue;
+
             // reflection
-            vec3 diffuse_dir = normalize3(vadd3(hit.normal, rand_sphere()));
+            vec3 diffuse_dir = rand_sphere_cosine(hit.normal);
             vec3 specular_dir = vadd3(ray.dir, fmul3(2, hit.normal));
             bool is_specular_bounce = material.specular_probability >= frand();
             ray.dir = lerp(diffuse_dir, specular_dir, material.smoothness * is_specular_bounce);

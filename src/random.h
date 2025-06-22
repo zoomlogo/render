@@ -4,4 +4,5 @@
 
 f32 frand(void);
 vec3 rand_sphere(void);
+vec3 rand_sphere_cosine(vec3 normal);
 vec3 rand_sphere_diffuse(vec3 normal);

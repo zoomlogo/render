@@ -62,6 +62,11 @@ i32 main(void) {
         1,
         (material_t) { CYAN }
     });
+    scene_add_sphere(scene, (sphere_t) {
+        (vec3) {0, 2, 0},
+        2,
+        (material_t) { GREEN }
+    });
 
     // load knight
     FILE *knight_file = fopen("modal/Knight.obj", "r");
@@ -71,11 +76,11 @@ i32 main(void) {
     scale_model(knight, (vec3) {1.5, 1.5, 1.5});
     rotate_model(knight, (vec3) {0, 1, 0}, 270);
 
-    scene_add_model(scene, *knight);
+    // scene_add_model(scene, *knight);
 
 
     // populate the buffer
-    const usize RAYS_PER_PIXEL = 10;
+    const usize RAYS_PER_PIXEL = 1;
     for (usize i = 0; i < SCREEN_HEIGHT * SCREEN_WIDTH; i++) {
         vec3 coords = i2v(i);
         vec3 world_coords = screen_to_world_coords(scene->camera, coords);
