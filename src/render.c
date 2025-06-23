@@ -145,6 +145,7 @@ vec3 trace(ray_t original_ray, scene_t scene, usize num_bounces) {
     vec3 ray_colour = { 1, 1, 1 };
     vec3 incoming_light = { 0, 0, 0 };
     ray_t ray = original_ray;
+    const f32 eps = 0.000001;
 
     hitinfo_t hit;
     for (usize i = 0; i < num_bounces + 1; i++) {
@@ -156,7 +157,7 @@ vec3 trace(ray_t original_ray, scene_t scene, usize num_bounces) {
 
             // skip calculation if hit point is same as ray origin
             // to account for numerical error
-            if (hit.dst < 0.000001) continue;
+            if (hit.dst < eps) continue;
 
             // reflection
             vec3 diffuse_dir = rand_sphere_cosine(hit.normal);
@@ -185,7 +186,7 @@ vec3 trace(ray_t original_ray, scene_t scene, usize num_bounces) {
                 vec3 pv = vsub3(target, hit.point);
                 ray_t ghost_ray = { hit.point, normalize3(pv) };
                 hitinfo_t ghost_hit = get_closest_hit(ghost_ray, scene);
-                if (ghost_hit.did_hit && ghost_hit.dst - length3(pv) < 0.000001) {
+                if (ghost_hit.did_hit && ghost_hit.dst - length3(pv) < eps) {
                     vec3 ghost_emitted_light = fmul3(ghost_hit.material.emission_strength, ghost_hit.material.emission_colour);
                     incoming_light = vadd3(incoming_light, vmul3(ghost_emitted_light, ray_colour));
                 }

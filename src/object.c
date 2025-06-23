@@ -52,24 +52,25 @@ hitinfo_t ray_sphere_intersection(ray_t ray, sphere_t sphere) {
 hitinfo_t ray_triangle_intersection(ray_t ray, triangle_t triangle) {
     // Möller-Trumbore intersection algorithm
     hitinfo_t hitinfo = { false, INFINITY };
+    const f32 eps = 0.000001;
 
     vec3 edge1 = vsub3(*triangle.v2, *triangle.v1);
     vec3 edge2 = vsub3(*triangle.v3, *triangle.v1);
     vec3 crossed2 = cross3(ray.dir, edge2);
     f32 det = dot3(edge1, crossed2);
 
-    if (det > -0.000001 && det < 0.000001) return hitinfo;
+    if (det > -eps && det < eps) return hitinfo;
     f32 idet = 1 / det;
     vec3 s = vsub3(ray.pos, *triangle.v1);
     f32 u = idet * dot3(s, crossed2);
 
-    if ((u < 0 && fabsf(u) > 0.000001) || (u > 1 && fabsf(u-1) > 0.000001)) return hitinfo;
+    if ((u < 0 && fabsf(u) > eps) || (u > 1 && fabsf(u-1) > eps)) return hitinfo;
     vec3 crossed1 = cross3(s, edge1);
     f32 v = idet * dot3(ray.dir, crossed1);
 
-    if ((v < 0 && fabsf(v) > 0.000001) || (u + v > 1 && fabsf(u + v - 1) > 0.000001)) return hitinfo;
+    if ((v < 0 && fabsf(v) > eps) || (u + v > 1 && fabsf(u + v - 1) > eps)) return hitinfo;
     f32 t = idet * dot3(edge2, crossed1);
-    if (t > 0.000001) {
+    if (t > eps) {
         hitinfo.did_hit = true;
         hitinfo.dst = t;
         hitinfo.material = triangle.material;
