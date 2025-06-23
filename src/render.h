@@ -12,7 +12,7 @@ typedef struct sun_t {
 } sun_t;
 
 typedef struct scene_t {
-    usize _o_alloc, num_objects;
+    usize _o_alloc, num_objects, num_sources;
     object_t *objects;
     usize _m_alloc, num_models;
     model_t *models;

@@ -9,6 +9,25 @@ f32 frand(void) {
     return (f32) rand() / RAND_MAX;
 }
 
+// generate a random point on a triangle
+vec3 rand_triangle(vec3 v1, vec3 v2, vec3 v3) {
+    // choose u, v, w
+    // using barycentric coordinates
+    f32 u, v, w;
+    do {
+        u = frand();
+        v = frand();
+        w = 1 - u - v;
+    } while (w < 0);
+
+    // generate a point on triangle
+    return vadd3(vadd3(
+        fmul3(u, v1),
+        fmul3(v, v2)),
+        fmul3(w, v3)
+    );
+}
+
 // generate a random point on a sphere
 vec3 rand_sphere(void) {
     // choose u, v

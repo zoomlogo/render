@@ -43,6 +43,32 @@ static void test_scene_add_object(void) {
     del_scene(scene);
 }
 
+static void test_scene_add_source(void) {
+    scene_t *scene = new_scene();
+    scene_add_sphere(scene, (sphere_t) { .pos = {0,0,0}, .r = 1 });
+    scene_add_sphere(scene, (sphere_t) { .pos = {0,0,0}, .r = 2 });
+    scene_add_sphere(scene, (sphere_t) { .pos = {0,0,0}, .r = 3 });
+    scene_add_sphere(scene, (sphere_t) { .pos = {0,0,0}, .r = 4 });
+
+    ASSERT(scene->num_objects == 4);
+    ASSERT(scene->_o_alloc == 8);
+    ASSERT(scene->objects[3].sphere.r == 4);
+
+    scene_add_triangle(scene, (triangle_t) {
+        &(vec3) {0,0,0},
+        &(vec3) {0,1,0},
+        &(vec3) {0,1,1},
+        (material_t) { WHITE, 5, WHITE },
+    });
+
+    ASSERT(scene->num_objects == 5);
+    ASSERT(scene->_o_alloc == 8);
+    ASSERT(eql3(*scene->objects[0].triangle.v3, ((vec3) {0,1,1})));
+
+    del_scene(scene);
+}
+
+
 void test_scene_add_model(void) {
     scene_t *scene = new_scene();
     FILE *file = fopen("modal/Cube.obj", "r");
@@ -64,6 +90,7 @@ void test_render(void) {
 
     test_scene_setup();
     test_scene_add_object();
+    test_scene_add_source();
     test_scene_add_model();
 
     END_TEST();

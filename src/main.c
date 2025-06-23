@@ -44,13 +44,13 @@ i32 main(void) {
         &((vec3) {100, 0, 100}),
         &((vec3) {-100, 0, 100}),
         &((vec3) {100, 0, -100}),
-        (material_t) { (vec3) {0.4, 0.5, 0.6 } }
+        (material_t) { RED }
     });
     scene_add_triangle(scene, (triangle_t) {
             &((vec3) {-100, 0, 100}),
             &((vec3) {100, 0, -100}),
             &((vec3) {-100, 0, -100}),
-            (material_t) { (vec3) {0.4, 0.5, 0.6 } }
+            (material_t) { RED }
     });
     scene_add_sphere(scene, (sphere_t) {
         (vec3) {-3, 1, 1},
@@ -65,7 +65,7 @@ i32 main(void) {
     scene_add_sphere(scene, (sphere_t) {
         (vec3) {0, 2, 0},
         2,
-        (material_t) { GREEN }
+        (material_t) { GREEN, 4, YELLOW }
     });
 
     // load knight
@@ -80,7 +80,7 @@ i32 main(void) {
 
 
     // populate the buffer
-    const usize RAYS_PER_PIXEL = 1;
+    const usize RAYS_PER_PIXEL = 50;
     for (usize i = 0; i < SCREEN_HEIGHT * SCREEN_WIDTH; i++) {
         vec3 coords = i2v(i);
         vec3 world_coords = screen_to_world_coords(scene->camera, coords);

@@ -34,6 +34,13 @@ void scene_add_sphere(scene_t *scene, sphere_t sphere) {
         scene->_o_alloc *= 2;
         scene->objects = realloc(scene->objects, sizeof(object_t) * scene->_o_alloc);
     }
+
+    if (sphere.material.emission_strength > 0) {
+        // put the light sources first
+        object_t temp = scene->objects[scene->num_sources];
+        scene->objects[scene->num_sources++] = scene->objects[scene->num_objects - 1];
+        scene->objects[scene->num_objects - 1] = temp;
+    }
 }
 
 void scene_add_triangle(scene_t *scene, triangle_t triangle) {
@@ -42,6 +49,13 @@ void scene_add_triangle(scene_t *scene, triangle_t triangle) {
     if (scene->num_objects >= scene->_o_alloc) {
         scene->_o_alloc *= 2;
         scene->objects = realloc(scene->objects, sizeof(object_t) * scene->_o_alloc);
+    }
+
+    if (triangle.material.emission_strength > 0) {
+        // put the light sources first
+        object_t temp = scene->objects[scene->num_sources];
+        scene->objects[scene->num_sources++] = scene->objects[scene->num_objects - 1];
+        scene->objects[scene->num_objects - 1] = temp;
     }
 }
 
@@ -65,6 +79,7 @@ static vec3 lerp(vec3 a, vec3 b, f32 t) {
 }
 
 hitinfo_t get_closest_hit(ray_t ray, scene_t scene) {
+    // XXX need to optimize this
     // loop over all objects in scene and return the closest one
     hitinfo_t closest_hit = { false, INFINITY };
     hitinfo_t hitinfo;
@@ -108,6 +123,24 @@ vec3 get_environment_light(ray_t ray, sun_t sun) {
     return net_light;
 }
 
+static inline vec3 random_source_point(scene_t scene) {
+    usize random_source_index = rand() % scene.num_sources;
+    object_t source = scene.objects[random_source_index];
+
+    vec3 point_on_source;
+    if (source.is_triangle) {
+        point_on_source = rand_triangle(
+            *source.triangle.v1,
+            *source.triangle.v2,
+            *source.triangle.v3
+        );
+    } else {
+        point_on_source = vadd3(source.sphere.pos, rand_sphere());
+    }
+
+    return point_on_source;
+}
+
 vec3 trace(ray_t original_ray, scene_t scene, usize num_bounces) {
     vec3 ray_colour = { 1, 1, 1 };
     vec3 incoming_light = { 0, 0, 0 };
@@ -133,17 +166,33 @@ vec3 trace(ray_t original_ray, scene_t scene, usize num_bounces) {
 
             // incoming light calculation
             vec3 emitted_light = fmul3(material.emission_strength, material.emission_colour);
+            if (i != 0)
+                emitted_light = fmul3(0.5, incoming_light);
             incoming_light = vadd3(incoming_light, vmul3(emitted_light, ray_colour));
             ray_colour = vmul3(ray_colour, lerp(material.colour, material.specular_colour, is_specular_bounce));
 
-            // hacky dls
-            ray_t ghost_ray = { hit.point, rand_sphere_cosine2(scene.sun.dir, 4) };
-            hitinfo_t ghost_hit = get_closest_hit(ghost_ray, scene);
-            if (!ghost_hit.did_hit)
-                incoming_light = vadd3(incoming_light, vmul3(get_environment_light(ray, scene.sun), ray_colour));
+            // dls for sun
+            if (!eql3(scene.sun.dir, ((vec3) {0, 0, 0}))) {
+                ray_t ghost_ray = { hit.point, rand_sphere_cosine2(scene.sun.dir, 4) };
+                hitinfo_t ghost_hit = get_closest_hit(ghost_ray, scene);
+                if (!ghost_hit.did_hit)
+                    incoming_light = vadd3(incoming_light, vmul3(get_environment_light(ray, scene.sun), ray_colour));
+            }
+
+            // dls for other objects
+            if (scene.num_sources > 0) {
+                vec3 target = random_source_point(scene);
+                vec3 pv = vsub3(target, hit.point);
+                ray_t ghost_ray = { hit.point, normalize3(pv) };
+                hitinfo_t ghost_hit = get_closest_hit(ghost_ray, scene);
+                if (ghost_hit.did_hit && ghost_hit.dst - length3(pv) < 0.000001) {
+                    vec3 ghost_emitted_light = fmul3(ghost_hit.material.emission_strength, ghost_hit.material.emission_colour);
+                    incoming_light = vadd3(incoming_light, vmul3(ghost_emitted_light, ray_colour));
+                }
+            }
         } else {
             incoming_light = vadd3(incoming_light, vmul3(get_environment_light(ray, scene.sun), ray_colour));
-            if (i != 0) // && ray.dir != ghost_ray.dir)
+            if (i != 0)
                 incoming_light = fmul3(0.5, incoming_light);
             break;
         }
