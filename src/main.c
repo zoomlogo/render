@@ -65,7 +65,7 @@ i32 main(void) {
     scene_add_sphere(scene, (sphere_t) {
         (vec3) {0, 2, 0},
         2,
-        (material_t) { GREEN }
+        (material_t) { GREEN, 4, YELLOW }
     });
 
     // load knight
