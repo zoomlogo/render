@@ -58,18 +58,18 @@ hitinfo_t ray_triangle_intersection(ray_t ray, triangle_t triangle) {
     vec3 crossed2 = cross3(ray.dir, edge2);
     f32 det = dot3(edge1, crossed2);
 
-    if (det > -FLT_EPSILON && det < FLT_EPSILON) return hitinfo;
+    if (det > -0.000001 && det < 0.000001) return hitinfo;
     f32 idet = 1 / det;
     vec3 s = vsub3(ray.pos, *triangle.v1);
     f32 u = idet * dot3(s, crossed2);
 
-    if ((u < 0 && fabsf(u) > FLT_EPSILON) || (u > 1 && fabsf(u-1) > FLT_EPSILON)) return hitinfo;
+    if ((u < 0 && fabsf(u) > 0.000001) || (u > 1 && fabsf(u-1) > 0.000001)) return hitinfo;
     vec3 crossed1 = cross3(s, edge1);
     f32 v = idet * dot3(ray.dir, crossed1);
 
-    if ((v < 0 && fabsf(v) > FLT_EPSILON) || (u + v > 1 && fabsf(u + v - 1) > FLT_EPSILON)) return hitinfo;
+    if ((v < 0 && fabsf(v) > 0.000001) || (u + v > 1 && fabsf(u + v - 1) > 0.000001)) return hitinfo;
     f32 t = idet * dot3(edge2, crossed1);
-    if (t > FLT_EPSILON) {
+    if (t > 0.000001) {
         hitinfo.did_hit = true;
         hitinfo.dst = t;
         hitinfo.material = triangle.material;
