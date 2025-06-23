@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <time.h>
 
+#include "random.h"
 #include "types.h"
 #include "camera.h"
 #include "render.h"
@@ -23,7 +24,7 @@ i32 main(void) {
     vec3 *buffer = (vec3 *) malloc(SCREEN_WIDTH * SCREEN_HEIGHT * sizeof(vec3));
 
     // set random
-    srand((u32) time(NULL));
+    pcg_init(time(NULL));
 
     // scene setup
     scene_t *scene = new_scene();
