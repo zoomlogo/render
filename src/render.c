@@ -124,7 +124,7 @@ vec3 get_environment_light(ray_t ray, sun_t sun) {
 }
 
 static inline vec3 random_source_point(scene_t scene) {
-    usize random_source_index = rand() % scene.num_sources;
+    usize random_source_index = pcg() % scene.num_sources;
     object_t source = scene.objects[random_source_index];
 
     vec3 point_on_source;
