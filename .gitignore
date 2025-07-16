@@ -3,6 +3,7 @@ obj/
 render
 out.ppm
 test_all
+*.png
 
 # lsp (clangd)
 compile_commands.json
