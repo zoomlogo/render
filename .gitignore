@@ -9,6 +9,10 @@ test_all
 compile_commands.json
 .cache
 
+# profiling
+analysis*
+gmon.out
+
 # misc
 do
 di
