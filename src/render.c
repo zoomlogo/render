@@ -2,6 +2,7 @@
 #include <math.h>
 #include <float.h>
 
+#include "object.h"
 #include "types.h"
 #include "vec.h"
 #include "render.h"
@@ -100,6 +101,9 @@ hitinfo_t get_closest_hit(ray_t ray, scene_t scene) {
     // models
     for (usize i = 0; i < scene.num_models; i++) {
         model_t model = scene.models[i];
+
+        if (!ray_aabb_intersection(ray, model.bounds))
+            continue;  // skip if we completely miss the model
         // loop over all triangles in model
         for (usize j = 0; j < model.N_triangles; j++) {
             hitinfo = ray_triangle_intersection(ray, model.triangles[j]);
@@ -145,7 +149,7 @@ vec3 trace(ray_t original_ray, scene_t scene, usize num_bounces) {
     vec3 ray_colour = { 1, 1, 1 };
     vec3 incoming_light = { 0, 0, 0 };
     ray_t ray = original_ray;
-    const f32 eps = 0.000001;
+    const f32 eps = FEPS;
 
     hitinfo_t hit;
     for (usize i = 0; i < num_bounces + 1; i++) {

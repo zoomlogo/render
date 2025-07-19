@@ -10,6 +10,7 @@ typedef struct model_t {
     vec3 *vertices;
     usize N_triangles;
     triangle_t *triangles;
+    aabb_t bounds;
 } model_t;
 
 model_t *load_model(FILE *file, material_t material);

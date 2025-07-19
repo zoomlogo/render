@@ -28,6 +28,7 @@ i32 main(void) {
 
     // scene setup
     scene_t *scene = new_scene();
+    if (SETUP_SCENE_MODE) printf("in setup scene mode\n");
     // camera setup
     scene_setup_sun(scene, (vec3) {-3, 4, -8}, WHITE, 100, 60);
     scene->camera = setup_camera(
@@ -63,21 +64,22 @@ i32 main(void) {
         1,
         (material_t) { CYAN }
     });
-    scene_add_sphere(scene, (sphere_t) {
-        (vec3) {0, 2, 0},
-        2,
-        (material_t) { GREEN }
-    });
+
+    // scene_add_sphere(scene, (sphere_t) {
+    //     (vec3) {0, 2, 0},
+    //     2,
+    //     (material_t) { GREEN }
+    // });
 
     // load knight
     FILE *knight_file = fopen("modal/Knight.obj", "r");
-    model_t *knight = load_model(knight_file, (material_t) { RED });
+    model_t *knight = load_model(knight_file, (material_t) { WHITE });
     fclose(knight_file);
 
     scale_model(knight, (vec3) {1.5, 1.5, 1.5});
     rotate_model(knight, (vec3) {0, 1, 0}, 270);
 
-    // scene_add_model(scene, *knight);
+    scene_add_model(scene, *knight);
 
 
     // populate the buffer

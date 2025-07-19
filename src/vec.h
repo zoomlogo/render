@@ -44,7 +44,12 @@ typedef struct { f32 v[9]; } mat3;
 #define vadd3(a,b) \
     ({ const vec3 _a = (a), _b = (b); \
        (vec3) { _a.x + _b.x, _a.y + _b.y, _a.z + _b.z}; })
-#define vsub3(a,b) vadd3(a, fmul3(-1, b))
+#define vsub3(a,b) \
+    ({ const vec3 _a = (a), _b = (b); \
+       (vec3) { _a.x - _b.x, _a.y - _b.y, _a.z - _b.z}; })
+#define vabs3(v) \
+    ({ const vec3 _v = (v); \
+       (vec3) { fabsf(_v.x), fabsf(_v.y), fabsf(_v.z) }; })
 #define length3(v) \
     ({ const vec3 _v = (v); \
        sqrtf(dot3(_v, _v)); })

@@ -1,4 +1,28 @@
 #include "object.h"
+#include "vec.h"
+
+
+bool ray_aabb_intersection(ray_t ray, aabb_t aabb) {
+    // setup ray and box
+    vec3 box_size = vabs3(vsub3(aabb.a, aabb.b));
+    vec3 box_origin = fmul3(0.5f, vadd3(aabb.a, aabb.b));
+    ray_t transformed_ray = { vsub3(ray.pos, box_origin), ray.dir };
+
+    // from inigo quilez
+    vec3 m = { 1 / transformed_ray.dir.x, 1 / transformed_ray.dir.y, 1 / transformed_ray.dir.z };
+    vec3 n = vmul3(m, transformed_ray.pos);
+    vec3 k = vmul3(vabs3(m), box_size);
+
+    vec3 t1 = fmul3(-1, vadd3(n, k));
+    vec3 t2 = fmul3(-1, vsub3(n, k));
+
+    f32 tN = max(max(t1.x, t1.y), t1.z);
+    f32 tF = min(min(t2.x, t2.y), t2.z);
+
+    if (tN > tF || tF < 0.0) return false; // did not hit the box
+
+    return true;
+}
 
 hitinfo_t ray_sphere_intersection(ray_t ray, sphere_t sphere) {
     // suppose: ray ≡ z̄ = r̄ + t·n̄
@@ -52,7 +76,7 @@ hitinfo_t ray_sphere_intersection(ray_t ray, sphere_t sphere) {
 hitinfo_t ray_triangle_intersection(ray_t ray, triangle_t triangle) {
     // Möller-Trumbore intersection algorithm
     hitinfo_t hitinfo = { false, INFINITY };
-    const f32 eps = 0.000001;
+    const f32 eps = FEPS;
 
     vec3 edge1 = vsub3(*triangle.v2, *triangle.v1);
     vec3 edge2 = vsub3(*triangle.v3, *triangle.v1);

@@ -2,6 +2,9 @@
 #include <stddef.h>
 #include <stdint.h>
 
+#define M_PI 3.14159265358979323846
+#define FEPS 0.000001
+
 typedef int8_t   i8;
 typedef int16_t i16;
 typedef int32_t i32;

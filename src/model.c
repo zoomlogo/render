@@ -31,6 +31,10 @@ model_t *load_model(FILE *file, material_t material) {
     usize v_alloc = 16;
     vec3 *vbuf = (vec3 *) malloc(sizeof(vec3) * v_alloc);
 
+    // bounding box
+    f32 ax = 999, ay = 999, az = 999;  // minima
+    f32 bx = -999, by = -999, bz = -999;  // maxima
+
     // reading faces is slightly complicated
     // theoretically we need 2 dynamic buffers but 1 is enough for us
     // NOTE there cannot be more than 16 vertices per face
@@ -59,6 +63,11 @@ model_t *load_model(FILE *file, material_t material) {
             // NOTE only 3d verticies are supported (no x y z w)
             v_flag = false;
             fscanf(file, "%f %f %f", &(vertex.x), &(vertex.y), &(vertex.z));
+
+            // bounding box
+            ax = min(ax, vertex.x); ay = min(ay, vertex.y); az = min(az, vertex.z);
+            bx = max(bx, vertex.x); by = max(by, vertex.y); bz = max(bz, vertex.z);
+
             memcpy(&vbuf[model->N_vertices++], &vertex, sizeof(vec3));
             // expand buffer if we exceed limits
             if (model->N_vertices >= v_alloc) {
@@ -118,6 +127,14 @@ model_t *load_model(FILE *file, material_t material) {
         free(face.vertex_indicies);
     }
     free(fbuf);
+
+    // generate bounds
+    ax -= FEPS; ay -= FEPS; az -= FEPS;
+    bx += FEPS; by += FEPS; bz += FEPS;
+    model->bounds = (aabb_t) {
+        (vec3) { ax, ay, az },
+        (vec3) { bx, by, bz }
+    };
 
     return model;
 }

@@ -6,6 +6,10 @@ typedef struct ray_t {
     vec3 pos, dir;
 } ray_t;
 
+typedef struct aabb_t {
+    vec3 a, b;
+} aabb_t;
+
 typedef struct material_t {
     vec3 colour;
     f32 emission_strength;
@@ -43,6 +47,7 @@ typedef struct hitinfo_t {
 
 
 // ray-object intersection code
+bool ray_aabb_intersection(ray_t ray, aabb_t aabb);
 hitinfo_t ray_sphere_intersection(ray_t ray, sphere_t sphere);
 hitinfo_t ray_triangle_intersection(ray_t ray, triangle_t triangle);
 
