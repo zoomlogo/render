@@ -10,7 +10,7 @@ INIT_TEST();
 
 static void test_model_loading_cube(void) {
     FILE *file = fopen("modal/Cube.obj", "r");
-    model_t *model = load_model(file, (material_t) { WHITE });
+    model_t *model = load_model(file, &(material_t) { WHITE });
     fclose(file);
 
     ASSERT(strcmp(model->name, "Cube") == 0);
@@ -33,19 +33,19 @@ static void test_model_loading_cube(void) {
 
 static void test_model_loading_knight(void) {
     FILE *file = fopen("modal/Knight.obj", "r");
-    model_t *model = load_model(file, (material_t) { GREEN });
+    model_t *model = load_model(file, &(material_t) { GREEN });
     fclose(file);
 
     ASSERT(strcmp(model->name, "Knight") == 0);
     ASSERT(model->N_vertices == 235);
     ASSERT(model->N_triangles == 456);
-    ASSERT(eql3(model->triangles[0].material.colour, GREEN));
+    ASSERT(eql3(model->triangles[0].material->colour, GREEN));
     destroy_model(model);
 }
 
 void test_translate_model(void) {
     FILE *file = fopen("modal/Cube.obj", "r");
-    model_t *model = load_model(file, (material_t) { WHITE });
+    model_t *model = load_model(file, &(material_t) { WHITE });
     fclose(file);
 
     translate_model(model, (vec3) {5, 3, 4});
@@ -60,7 +60,7 @@ void test_translate_model(void) {
 
 void test_scale_model(void) {
     FILE *file = fopen("modal/Cube.obj", "r");
-    model_t *model = load_model(file, (material_t) { WHITE });
+    model_t *model = load_model(file, &(material_t) { WHITE });
     fclose(file);
 
     scale_model(model, (vec3) {1, 3, 0.5f});
@@ -75,7 +75,7 @@ void test_scale_model(void) {
 
 void test_rotate_model(void) {
     FILE *file = fopen("modal/Cube.obj", "r");
-    model_t *model = load_model(file, (material_t) { WHITE });
+    model_t *model = load_model(file, &(material_t) { WHITE });
     fclose(file);
 
     rotate_model(model, (vec3) {0,0,1}, 90);

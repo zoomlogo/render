@@ -21,44 +21,42 @@ static void test_scene_setup(void) {
 
 static void test_scene_add_object(void) {
     scene_t *scene = new_scene();
-    scene_add_sphere(scene, (sphere_t) { .pos = {0,0,0}, .r = 1 });
-    scene_add_sphere(scene, (sphere_t) { .pos = {0,0,0}, .r = 2 });
-    scene_add_sphere(scene, (sphere_t) { .pos = {0,0,0}, .r = 3 });
-    scene_add_sphere(scene, (sphere_t) { .pos = {0,0,0}, .r = 4 });
+    scene_add_sphere(scene, (sphere_t) { (vec3) {-3, 1, 1}, 1, &(material_t) { BLUE } });
 
-    ASSERT(scene->num_objects == 4);
-    ASSERT(scene->_o_alloc == 8);
-    ASSERT(scene->objects[3].sphere.r == 4);
+    ASSERT(scene->num_objects == 1);
+    ASSERT(scene->_o_alloc == 4);
+    ASSERT(scene->objects[0].sphere.r == 1);
 
     scene_add_triangle(scene, (triangle_t) {
         &(vec3) {0,0,0},
         &(vec3) {0,1,0},
         &(vec3) {0,1,1},
+        &(material_t) { BLUE },
     });
 
-    ASSERT(scene->num_objects == 5);
-    ASSERT(scene->_o_alloc == 8);
-    ASSERT(eql3(*scene->objects[4].triangle.v3, ((vec3) {0,1,1})));
+    ASSERT(scene->num_objects == 2);
+    ASSERT(scene->_o_alloc == 4);
+    ASSERT(eql3(*scene->objects[1].triangle.v3, ((vec3) {0,1,1})));
 
     del_scene(scene);
 }
 
 static void test_scene_add_source(void) {
     scene_t *scene = new_scene();
-    scene_add_sphere(scene, (sphere_t) { .pos = {0,0,0}, .r = 1 });
-    scene_add_sphere(scene, (sphere_t) { .pos = {0,0,0}, .r = 2 });
-    scene_add_sphere(scene, (sphere_t) { .pos = {0,0,0}, .r = 3 });
-    scene_add_sphere(scene, (sphere_t) { .pos = {0,0,0}, .r = 4 });
+    scene_add_sphere(scene, (sphere_t) { (vec3) {-3, 1, 1}, 1, &(material_t) { BLUE } });
+    scene_add_sphere(scene, (sphere_t) { (vec3) {-3, 3, 1}, 2, &(material_t) { BLUE } });
+    scene_add_sphere(scene, (sphere_t) { (vec3) {-3, 1, 4}, 1, &(material_t) { BLUE } });
+    scene_add_sphere(scene, (sphere_t) { (vec3) {-3, -2, 1}, 5, &(material_t) { BLUE } });
 
     ASSERT(scene->num_objects == 4);
     ASSERT(scene->_o_alloc == 8);
-    ASSERT(scene->objects[3].sphere.r == 4);
+    ASSERT(scene->objects[3].sphere.r == 5);
 
     scene_add_triangle(scene, (triangle_t) {
         &(vec3) {0,0,0},
         &(vec3) {0,1,0},
         &(vec3) {0,1,1},
-        (material_t) { WHITE, 5, WHITE },
+        &(material_t) { WHITE, 5, WHITE },
     });
 
     ASSERT(scene->num_objects == 5);
@@ -72,7 +70,7 @@ static void test_scene_add_source(void) {
 void test_scene_add_model(void) {
     scene_t *scene = new_scene();
     FILE *file = fopen("modal/Cube.obj", "r");
-    model_t *model = load_model(file, (material_t) { WHITE });
+    model_t *model = load_model(file, &(material_t) { WHITE });
     fclose(file);
     scene_add_model(scene, *model);
 

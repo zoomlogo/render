@@ -17,6 +17,7 @@ scene_t *new_scene(void) {
 
     scene->num_models = 0;
     scene->num_objects = 0;
+    scene->num_sources = 0;
 
     scene->models = (model_t *) malloc(sizeof(model_t) * scene->_m_alloc);
     scene->objects = (object_t *) malloc(sizeof(object_t) * scene->_o_alloc);
