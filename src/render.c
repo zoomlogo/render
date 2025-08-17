@@ -89,7 +89,7 @@ hitinfo_t get_closest_hit(ray_t ray, scene_t scene) {
     for (usize j = 0; j < scene.num_objects; j++) {
         object_t object = scene.objects[j];
         if (object.is_triangle)
-            hitinfo = ray_triangle_intersection(ray, object.triangle);
+            hitinfo = ray_triangle_intersection(&ray, &object.triangle);
         else
             hitinfo = ray_sphere_intersection(ray, object.sphere);
 
@@ -106,7 +106,7 @@ hitinfo_t get_closest_hit(ray_t ray, scene_t scene) {
             continue;  // skip if we completely miss the model
         // loop over all triangles in model
         for (usize j = 0; j < model.N_triangles; j++) {
-            hitinfo = ray_triangle_intersection(ray, model.triangles[j]);
+            hitinfo = ray_triangle_intersection(&ray, &model.triangles[j]);
 
             // depth checking
             if (hitinfo.did_hit && min(hitinfo.dst, closest_hit.dst) != closest_hit.dst)
