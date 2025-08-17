@@ -21,12 +21,12 @@ typedef struct material_t {
 
 typedef struct sphere_t {
     vec3 pos; f32 r;
-    material_t material;
+    material_t *material;
 } sphere_t;
 
 typedef struct triangle_t {
     vec3 *v1, *v2, *v3;
-    material_t material;
+    material_t *material;
 } triangle_t;
 
 typedef struct object_t {
@@ -42,12 +42,14 @@ typedef struct hitinfo_t {
     f32 dst;
     vec3 normal; // surface normal at the point
     vec3 point; // point of intersection
-    material_t material;
+    material_t *material;
 } hitinfo_t;
 
+// constructors
+void new_hitinfo(hitinfo_t *out);
 
 // ray-object intersection code
-bool ray_aabb_intersection(ray_t ray, aabb_t aabb);
-hitinfo_t ray_sphere_intersection(ray_t ray, sphere_t sphere);
-hitinfo_t ray_triangle_intersection(ray_t *ray, triangle_t *triangle);
+bool ray_aabb_intersection(ray_t *ray, aabb_t *aabb);
+void ray_sphere_intersection(ray_t *ray, sphere_t *sphere, hitinfo_t *out);
+void ray_triangle_intersection(ray_t *ray, triangle_t *triangle, hitinfo_t *out);
 

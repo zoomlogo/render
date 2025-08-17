@@ -13,7 +13,7 @@ typedef struct model_t {
     aabb_t bounds;
 } model_t;
 
-model_t *load_model(FILE *file, material_t material);
+model_t *load_model(FILE *file, material_t *material);
 void destroy_model(model_t *model);
 
 void translate_model(model_t *model, vec3 pos);

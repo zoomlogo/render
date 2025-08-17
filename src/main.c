@@ -30,7 +30,7 @@ i32 main(void) {
     scene_t *scene = new_scene();
     if (SETUP_SCENE_MODE) printf("in setup scene mode\n");
     // camera setup
-    scene_setup_sun(scene, (vec3) {-3, 4, -8}, WHITE, 100, 60);
+    scene_setup_sun(scene, (vec3) {-3, 4, 8}, WHITE, 100, 60);
     scene->camera = setup_camera(
         (vec3) {0, 5, 15},  // pos
         (vec3) {0, -0.3, -1},  // dir
@@ -46,23 +46,23 @@ i32 main(void) {
         &((vec3) {100, 0, 100}),
         &((vec3) {-100, 0, 100}),
         &((vec3) {100, 0, -100}),
-        (material_t) { RED }
+        &(material_t) { RED }
     });
     scene_add_triangle(scene, (triangle_t) {
             &((vec3) {-100, 0, 100}),
             &((vec3) {100, 0, -100}),
             &((vec3) {-100, 0, -100}),
-            (material_t) { RED }
+            &(material_t) { RED }
     });
     scene_add_sphere(scene, (sphere_t) {
         (vec3) {-3, 1, 1},
         1,
-        (material_t) { BLUE }
+        &(material_t) { BLUE }
     });
     scene_add_sphere(scene, (sphere_t) {
         (vec3) {3, 1, 1},
         1,
-        (material_t) { CYAN }
+        &(material_t) { CYAN }
     });
 
     // scene_add_sphere(scene, (sphere_t) {
@@ -73,7 +73,7 @@ i32 main(void) {
 
     // load knight
     FILE *knight_file = fopen("modal/Knight.obj", "r");
-    model_t *knight = load_model(knight_file, (material_t) { BLUE });
+    model_t *knight = load_model(knight_file, &(material_t) { .colour = { 0.6, 0.6, 0.6 } });
     fclose(knight_file);
 
     scale_model(knight, (vec3) {1.5, 1.5, 1.5});
@@ -83,28 +83,27 @@ i32 main(void) {
 
 
     // populate the buffer
-    const usize RAYS_PER_PIXEL = 5000;
-    const usize BOUNCES = 5;
+    const usize RAYS_PER_PIXEL = 10;
+    const usize BOUNCES = 2;
+    hitinfo_t hit;
     for (usize i = 0; i < SCREEN_HEIGHT * SCREEN_WIDTH; i++) {
-        printf(".");  // progress bar
         vec3 coords = i2v(i);
         vec3 world_coords = screen_to_world_coords(scene->camera, coords);
         vec3 dir = normalize3(vsub3(world_coords, scene->camera.pos));
         ray_t ray = { world_coords, dir };
 
         if (SETUP_SCENE_MODE) {
-            hitinfo_t hit = get_closest_hit(ray, *scene);
-            buffer[i] = hit.did_hit ? hit.material.colour : (vec3) { 0, 0, 0 };
+            get_closest_hit(&ray, scene, &hit);
+            buffer[i] = hit.did_hit ? hit.material->colour : (vec3) { 0, 0, 0 };
             continue;
         }
 
         vec3 colour = { 0, 0, 0 };
         for (usize j = 0; j < RAYS_PER_PIXEL; j++)
-            colour = vadd3(colour, trace(ray, *scene, BOUNCES));
+            colour = vadd3(colour, trace(ray, scene, BOUNCES));
 
         buffer[i] = fmul3(1 / (f32) RAYS_PER_PIXEL, colour);
     }
-    printf("\n");  // progress bar
 
     // write to output image
     FILE *fp = fopen("out.ppm", "w");

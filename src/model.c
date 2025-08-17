@@ -11,7 +11,7 @@ struct face_t {
     usize *vertex_indicies;
 };
 
-model_t *load_model(FILE *file, material_t material) {
+model_t *load_model(FILE *file, material_t *material) {
     model_t *model = (model_t *) malloc(sizeof(model_t));
     model->N_vertices = 0;
     model->N_triangles = 0;
