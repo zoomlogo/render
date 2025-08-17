@@ -73,7 +73,7 @@ i32 main(void) {
 
     // load knight
     FILE *knight_file = fopen("modal/Knight.obj", "r");
-    model_t *knight = load_model(knight_file, (material_t) { WHITE });
+    model_t *knight = load_model(knight_file, (material_t) { BLUE });
     fclose(knight_file);
 
     scale_model(knight, (vec3) {1.5, 1.5, 1.5});
@@ -83,8 +83,10 @@ i32 main(void) {
 
 
     // populate the buffer
-    const usize RAYS_PER_PIXEL = 50;
+    const usize RAYS_PER_PIXEL = 5000;
+    const usize BOUNCES = 5;
     for (usize i = 0; i < SCREEN_HEIGHT * SCREEN_WIDTH; i++) {
+        printf(".");  // progress bar
         vec3 coords = i2v(i);
         vec3 world_coords = screen_to_world_coords(scene->camera, coords);
         vec3 dir = normalize3(vsub3(world_coords, scene->camera.pos));
@@ -98,10 +100,11 @@ i32 main(void) {
 
         vec3 colour = { 0, 0, 0 };
         for (usize j = 0; j < RAYS_PER_PIXEL; j++)
-            colour = vadd3(colour, trace(ray, *scene, 4));
+            colour = vadd3(colour, trace(ray, *scene, BOUNCES));
 
         buffer[i] = fmul3(1 / (f32) RAYS_PER_PIXEL, colour);
     }
+    printf("\n");  // progress bar
 
     // write to output image
     FILE *fp = fopen("out.ppm", "w");
