@@ -10,6 +10,23 @@ inline void new_hitinfo(hitinfo_t *out) {
     out->point = (vec3) {0, 0, 0};
 }
 
+// aabb_t stuff:
+void new_aabb(aabb_t *out) {
+    out->a = (vec3) { INFINITY, INFINITY, INFINITY };
+    out->b = fmul3(-1, ((vec3) { INFINITY, INFINITY, INFINITY }));
+}
+
+void grow_to_include_point(aabb_t *box, vec3 point) {
+    box->a = min3(box->a, point);
+    box->b = max3(box->b, point);
+}
+
+void grow_to_include_triange(aabb_t *box, triangle_t *triangle) {
+    grow_to_include_point(box, *triangle->v1);
+    grow_to_include_point(box, *triangle->v2);
+    grow_to_include_point(box, *triangle->v3);
+}
+
 
 bool ray_aabb_intersection(ray_t *ray, aabb_t *aabb) {
     // setup ray and box

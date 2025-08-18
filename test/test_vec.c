@@ -4,7 +4,7 @@
 INIT_TEST();
 
 static void test_eql3(void) {
-    ASSERT(eql3(((vec3) {1, 2, 3}), ((vec3) {1, 2, 3})));
+    ASSERTQ(((vec3) {1, 2, 3}), ((vec3) {1, 2, 3}));
     ASSERT(!eql3(((vec3) {3, 1, 2}), ((vec3) {1, 2, 3})));
 }
 
@@ -19,62 +19,62 @@ static void test_dot3(void) {
 }
 
 static void test_cross3(void) {
-    ASSERT(eql3(cross3(
+    ASSERTQ(cross3(
         ((vec3) {0, 0, 1}),
         ((vec3) {0, 0, 1})),
-        ((vec3) {0, 0, 0})));
-    ASSERT(eql3(cross3(
+        ((vec3) {0, 0, 0}));
+    ASSERTQ(cross3(
         ((vec3) {1, 0, 0}),
         ((vec3) {0, 1, 0})),
-        ((vec3) {0, 0, 1})));
-    ASSERT(eql3(cross3(
+        ((vec3) {0, 0, 1}));
+    ASSERTQ(cross3(
         ((vec3) {0, 0, 1}),
         ((vec3) {1, 0, 0})),
-        ((vec3) {0, 1, 0})));
-    ASSERT(eql3(cross3(
+        ((vec3) {0, 1, 0}));
+    ASSERTQ(cross3(
         ((vec3) {0, 1, 0}),
         ((vec3) {0, 0, 1})),
-        ((vec3) {1, 0, 0})));
-    ASSERT(eql3(cross3(
+        ((vec3) {1, 0, 0}));
+    ASSERTQ(cross3(
         ((vec3) {1, 2, 3}),
         ((vec3) {2, 3, 1})),
-        ((vec3) {-7, 5, -1})));
-    ASSERT(eql3(cross3(
+        ((vec3) {-7, 5, -1}));
+    ASSERTQ(cross3(
         ((vec3) {2, 3, 1}),
         ((vec3) {1, 2, 3})),
-        ((vec3) {7, -5, 1})));
+        ((vec3) {7, -5, 1}));
 }
 
 static void test_fmul3(void) {
-    ASSERT(eql3(fmul3(0, ((vec3) {1, 2, 3})), ((vec3) {0, 0, 0})));
-    ASSERT(eql3(fmul3(1, ((vec3) {1, 2, 3})), ((vec3) {1, 2, 3})));
-    ASSERT(eql3(fmul3(-1, ((vec3) {1, 2, 3})), ((vec3) {-1, -2, -3})));
-    ASSERT(eql3(fmul3(2, ((vec3) {1, 2, 3})), ((vec3) {2, 4, 6})));
+    ASSERTQ(fmul3(0, ((vec3) {1, 2, 3})), ((vec3) {0, 0, 0}));
+    ASSERTQ(fmul3(1, ((vec3) {1, 2, 3})), ((vec3) {1, 2, 3}));
+    ASSERTQ(fmul3(-1, ((vec3) {1, 2, 3})), ((vec3) {-1, -2, -3}));
+    ASSERTQ(fmul3(2, ((vec3) {1, 2, 3})), ((vec3) {2, 4, 6}));
 }
 
 static void test_vmul3(void) {
-    ASSERT(eql3(vmul3(
+    ASSERTQ(vmul3(
         ((vec3) {2, 3, 1}),
         ((vec3) {1, 2, 3})),
-        ((vec3) {2, 6, 3})));
-    ASSERT(eql3(vmul3(
+        ((vec3) {2, 6, 3}));
+    ASSERTQ(vmul3(
         ((vec3) {0, 3, 1}),
         ((vec3) {1, 6, 0})),
-        ((vec3) {0, 18, 0})));
+        ((vec3) {0, 18, 0}));
 }
 
 static void test_vadd3(void) {
-    ASSERT(eql3(vadd3(
+    ASSERTQ(vadd3(
         ((vec3) {2, 3, 1}),
         ((vec3) {1, 2, 3})),
-        ((vec3) {3, 5, 4})));
+        ((vec3) {3, 5, 4}));
 }
 
 static void test_vsub3(void) {
-    ASSERT(eql3(vsub3(
+    ASSERTQ(vsub3(
         ((vec3) {2, 3, 1}),
         ((vec3) {1, 3, 3})),
-        ((vec3) {1, 0, -2})));
+        ((vec3) {1, 0, -2}));
 }
 
 static void test_length3(void) {
@@ -86,8 +86,16 @@ static void test_length3(void) {
 
 static void test_normalize3(void) {
     // case of zero vec3 is not handled
-    ASSERT(eql3(normalize3(((vec3) {1, 0, 0})), ((vec3) {1, 0, 0})));
-    ASSERT(eql3(normalize3(((vec3) {2, 1, 0})), ((vec3) {2 / sqrtf(5), 1 / sqrtf(5), 0})));
+    ASSERTQ(normalize3(((vec3) {1, 0, 0})), ((vec3) {1, 0, 0}));
+    ASSERTQ(normalize3(((vec3) {2, 1, 0})), ((vec3) {2 / sqrtf(5), 1 / sqrtf(5), 0}));
+}
+
+static void test_min3(void) {
+	ASSERTQ(min3(((vec3) {0, 0, 0}), ((vec3) {0, -1, 2})), ((vec3) {0, -1, 0}));
+}
+
+static void test_max3(void) {
+	ASSERTQ(max3(((vec3) {0, 0, 0}), ((vec3) {0, -1, 2})), ((vec3) {0, 0, 2}));
 }
 
 static void test_mmul3(void) {
@@ -123,7 +131,7 @@ static void test_mvmul3(void) {
         1, 0, 2
     }};
     vec3 b = { 4, 7, -1 };
-    ASSERT(eql3(mvmul3(a, b), ((vec3) { 5, 25, 2 })));
+    ASSERTQ(mvmul3(a, b), ((vec3) { 5, 25, 2 }));
 }
 
 static void test_eql4(void) {
@@ -206,6 +214,8 @@ void test_vec(void) {
     test_vsub3();
     test_length3();
     test_normalize3();
+	test_min3();
+	test_max3();
     test_mmul3();
     test_mvmul3();
 

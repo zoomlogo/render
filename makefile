@@ -3,13 +3,13 @@ CC=clang
 FLAGS=-Wall -std=c23 -O3
 
 # object file dependencies for target render:
-RENDER_DEPS := obj/main.o obj/vec.o obj/ppm.o obj/model.o
+RENDER_DEPS := obj/main.o obj/vec.o obj/ppm.o obj/model.o obj/bvh.o
 RENDER_DEPS += obj/camera.o obj/render.o obj/random.o obj/object.o
 
 # unit testing object file dependencies
 TEST_DEPS := obj/vec.o obj/ppm.o obj/model.o obj/object.o
-TEST_DEPS += obj/camera.o obj/render.o obj/random.o
-TEST_DEPS += obj/test_all.o obj/test_vec.o obj/test_ppm.o obj/test_model.o
+TEST_DEPS += obj/camera.o obj/render.o obj/random.o obj/bvh.o
+TEST_DEPS += obj/test_all.o obj/test_vec.o obj/test_ppm.o obj/test_model.o obj/test_bvh.o
 TEST_DEPS += obj/test_camera.o obj/test_render.o obj/test_random.o obj/test_object.o
 
 render: $(RENDER_DEPS)
@@ -37,6 +37,9 @@ obj/render.o: src/render.c src/render.h
 obj/random.o: src/random.c src/random.h
 	$(CC) -c $(FLAGS) src/random.c -o obj/random.o
 
+obj/bvh.o: src/bvh.c src/bvh.h
+	$(CC) -c $(FLAGS) src/bvh.c -o obj/bvh.o
+
 obj/model.o: src/model.c src/model.h
 	$(CC) -c $(FLAGS) src/model.c -o obj/model.o
 
@@ -61,6 +64,9 @@ obj/test_render.o: test/test_render.c test/test_render.h
 
 obj/test_random.o: test/test_random.c test/test_random.h
 	$(CC) -c $(FLAGS) test/test_random.c -o obj/test_random.o
+
+obj/test_bvh.o: test/test_bvh.c test/test_bvh.h
+	$(CC) -c $(FLAGS) test/test_bvh.c -o obj/test_bvh.o
 
 obj/test_model.o: test/test_model.c test/test_model.h
 	$(CC) -c $(FLAGS) test/test_model.c -o obj/test_model.o

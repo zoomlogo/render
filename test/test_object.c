@@ -58,8 +58,8 @@ void test_ray_triangle_intersection(void) {
     ray_triangle_intersection(&ray, &triangle, &hitinfo);
     ASSERT(hitinfo.did_hit == true);
     ASSERT(hitinfo.dst == 1);
-    ASSERT(eql3(hitinfo.normal, ((vec3) {0, 0, -1})));
-    ASSERT(eql3(hitinfo.point, ((vec3) {0.2, 0.2, 0})));
+    ASSERTQ(hitinfo.normal, ((vec3) {0, 0, -1}));
+    ASSERTQ(hitinfo.point, ((vec3) {0.2, 0.2, 0}));
 }
 
 void test_object(void) {

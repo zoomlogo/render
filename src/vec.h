@@ -57,6 +57,16 @@ typedef struct { f32 v[9]; } mat3;
     ({ const vec3 _v = (v); \
        f32 _l = sqrtf(dot3(_v, _v)); \
        (vec3) { _v.x/_l, _v.y/_l, _v.z/_l }; })
+#define min3(a,b) \
+    ({ const vec3 _a = (a), _b = (b); \
+       (vec3) {  _a.x < _b.x ? _a.x : _b.x, \
+                 _a.y < _b.y ? _a.y : _b.y, \
+                 _a.z < _b.z ? _a.z : _b.z }; })
+#define max3(a,b) \
+    ({ const vec3 _a = (a), _b = (b); \
+       (vec3) { _a.x > _b.x ? _a.x : _b.x, \
+                _a.y > _b.y ? _a.y : _b.y, \
+                _a.z > _b.z ? _a.z : _b.z }; })
 
 #define eye3() \
     ((mat3) { {1, 0, 0, 0, 1, 0, 0, 0, 1} })

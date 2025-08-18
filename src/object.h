@@ -7,7 +7,7 @@ typedef struct ray_t {
 } ray_t;
 
 typedef struct aabb_t {
-    vec3 a, b;
+    vec3 a, b;  // a: min, b: max
 } aabb_t;
 
 typedef struct material_t {
@@ -45,8 +45,13 @@ typedef struct hitinfo_t {
     material_t *material;
 } hitinfo_t;
 
-// constructors
+// constructor for hitinfo_t
 void new_hitinfo(hitinfo_t *out);
+
+// aabb_t stuff:
+void new_aabb(aabb_t *out);
+void grow_to_include_point(aabb_t *box, vec3 point);
+void grow_to_include_triange(aabb_t *box, triangle_t *triangle);
 
 // ray-object intersection code
 bool ray_aabb_intersection(ray_t *ray, aabb_t *aabb);
