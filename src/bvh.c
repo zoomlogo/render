@@ -28,12 +28,15 @@ static void split_bvh(bvh_t *parent, usize depth) {
     printf("%zu: %zu triangles\n", depth, parent->n);
 
     vec3 centre = fmul3(0.5, vadd3(parent->box.a, parent->box.b));
+    usize max_i = centre.x > centre.y ? (centre.x > centre.z ? 0 : 2) : 1;
+    float axis_centre = centre.x > centre.y ? (centre.x > centre.z ? centre.x : centre.z) : centre.y;
     for (usize i = 0; i < parent->n; i++) {
         // divide based on x coord
         // TODO split along longest axis
         triangle_t *tri = &parent->triangles[i];
         vec3 tri_centre = fmul3(1 / 3.f, vadd3(*tri->v1, vadd3(*tri->v2, *tri->v3)));
-        bvh_t *child = tri_centre.x < centre.x ? parent->left : parent->right;
+        float tri_centre_axis = max_i == 0 ? tri_centre.x : (max_i == 1 ? tri_centre.y : tri_centre.z);
+        bvh_t *child = tri_centre_axis < axis_centre ? parent->left : parent->right;
         add_triangle(child, tri);
         grow_to_include_triange(&child->box, tri);
     }
