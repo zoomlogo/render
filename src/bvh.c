@@ -68,6 +68,7 @@ void make_bvh(triangle_t *triangles, usize n, usize max_depth, bvh_t *out) {
 }
 
 void ray_bvh_intersection(ray_t *ray, bvh_t *bvh, hitinfo_t *out) {
+    // TODO make this iterative
     if (!ray_aabb_intersection(ray, &bvh->box)) return;
 
     hitinfo_t hit;

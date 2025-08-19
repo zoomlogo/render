@@ -22,6 +22,8 @@
 #define v2i(v) ({ const vec3 _v = (v); (usize) ((SCREEN_HEIGHT - _v.y - 1) * SCREEN_WIDTH + _v.x); })
 
 i32 main(void) {
+    clock_t start_time, end_time;
+    double duration;
     vec3 *buffer = (vec3 *) malloc(SCREEN_WIDTH * SCREEN_HEIGHT * sizeof(vec3));
 
     // set random
@@ -81,14 +83,21 @@ i32 main(void) {
     rotate_model(knight, (vec3) {0, 1, 0}, 270);
 
     bvh_t *bvh = new_bvh();
-    make_bvh(knight->triangles, knight->N_triangles, 8, bvh);
+
+    start_time = clock();
+    make_bvh(knight->triangles, knight->N_triangles, 20, bvh);
+    end_time = clock();
+
+    duration = 1000.0 * (end_time - start_time) / CLOCKS_PER_SEC;
+    printf("bvh construction time: %.2f ms\n", duration);
+
     knight->bvh = bvh;
 
     scene_add_model(scene, *knight);
 
 
     // populate the buffer
-    printf("START\n");
+    start_time = clock();
     const usize RAYS_PER_PIXEL = 10;
     const usize BOUNCES = 2;
     hitinfo_t hit;
@@ -110,7 +119,10 @@ i32 main(void) {
 
         buffer[i] = fmul3(1 / (f32) RAYS_PER_PIXEL, colour);
     }
-    printf("END\n");
+    end_time = clock();
+
+    duration = 1000.0 * (end_time - start_time) / CLOCKS_PER_SEC;
+    printf("render time: %.2f ms\n", duration);
 
     // write to output image
     FILE *fp = fopen("out.ppm", "w");
