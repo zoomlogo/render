@@ -136,6 +136,8 @@ model_t *load_model(FILE *file, material_t *material) {
         (vec3) { bx, by, bz }
     };
 
+    model->bvh = NULL;
+
     return model;
 }
 

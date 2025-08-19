@@ -2,6 +2,7 @@
 #include <math.h>
 #include <float.h>
 
+#include "bvh.h"
 #include "object.h"
 #include "types.h"
 #include "vec.h"
@@ -103,15 +104,19 @@ void get_closest_hit(ray_t *ray, scene_t *scene, hitinfo_t *out) {
     for (usize i = 0; i < scene->num_models; i++) {
         model_t model = scene->models[i];
 
-        if (!ray_aabb_intersection(ray, &model.bounds))
-            continue;  // skip if we completely miss the model
-        // loop over all triangles in model
-        for (usize j = 0; j < model.N_triangles; j++) {
-            ray_triangle_intersection(ray, &model.triangles[j], &hitinfo);
+        if (model.bvh) {
+            ray_bvh_intersection(ray, model.bvh, out);
+        } else {
+            if (!ray_aabb_intersection(ray, &model.bounds))
+                continue;  // skip if we completely miss the model
+            // loop over all triangles in model
+            for (usize j = 0; j < model.N_triangles; j++) {
+                ray_triangle_intersection(ray, &model.triangles[j], &hitinfo);
 
-            // depth checking
-            if (hitinfo.did_hit && min(hitinfo.dst, out->dst) != out->dst)
-                *out = hitinfo;
+                // depth checking
+                if (hitinfo.did_hit && min(hitinfo.dst, out->dst) != out->dst)
+                    *out = hitinfo;
+            }
         }
     }
 }

@@ -50,7 +50,7 @@ void new_hitinfo(hitinfo_t *out);
 
 // aabb_t stuff:
 void new_aabb(aabb_t *out);
-void grow_to_include_point(aabb_t *box, vec3 point);
+void grow_to_include_point(aabb_t *box, vec3 *point);
 void grow_to_include_triange(aabb_t *box, triangle_t *triangle);
 
 // ray-object intersection code

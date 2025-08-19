@@ -13,7 +13,6 @@
 
 #define SCREEN_WIDTH 1920
 #define SCREEN_HEIGHT 1080
-#define DEBUG_BVH true
 #define SETUP_SCENE_MODE false
 
 // TODO BVH and more optimizations
@@ -81,14 +80,15 @@ i32 main(void) {
     scale_model(knight, (vec3) {1.5, 1.5, 1.5});
     rotate_model(knight, (vec3) {0, 1, 0}, 270);
 
+    bvh_t *bvh = new_bvh();
+    make_bvh(knight->triangles, knight->N_triangles, 8, bvh);
+    knight->bvh = bvh;
+
     scene_add_model(scene, *knight);
 
-    bvh_t *bvh = new_bvh();
-    // make_bvh(knight->triangles, knight->N_triangles, 2, bvh);
-    scene_t *debug_scene = new_scene();
-    scene_add_model(debug_scene, *knight);
 
     // populate the buffer
+    printf("START\n");
     const usize RAYS_PER_PIXEL = 10;
     const usize BOUNCES = 2;
     hitinfo_t hit;
@@ -97,12 +97,6 @@ i32 main(void) {
         vec3 world_coords = screen_to_world_coords(scene->camera, coords);
         vec3 dir = normalize3(vsub3(world_coords, scene->camera.pos));
         ray_t ray = { world_coords, dir };
-
-        if (DEBUG_BVH) {
-            get_closest_hit(&ray, debug_scene, &hit);
-            buffer[i] = hit.did_hit ? hit.material->colour : (vec3) { 0, 0, 0 };
-            continue;
-        }
 
         if (SETUP_SCENE_MODE) {
             get_closest_hit(&ray, scene, &hit);
@@ -116,6 +110,7 @@ i32 main(void) {
 
         buffer[i] = fmul3(1 / (f32) RAYS_PER_PIXEL, colour);
     }
+    printf("END\n");
 
     // write to output image
     FILE *fp = fopen("out.ppm", "w");
@@ -125,8 +120,8 @@ i32 main(void) {
     // del
     free(buffer);
     del_scene(scene);
-    del_bvh(bvh);
     destroy_model(knight);
+    del_bvh(bvh);
 
     return 0;
 }

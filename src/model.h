@@ -3,6 +3,7 @@
 
 #include "vec.h"
 #include "object.h"
+#include "bvh.h"
 
 typedef struct model_t {
     char *name;
@@ -11,6 +12,7 @@ typedef struct model_t {
     usize N_triangles;
     triangle_t *triangles;
     aabb_t bounds;
+    bvh_t *bvh;
 } model_t;
 
 model_t *load_model(FILE *file, material_t *material);
