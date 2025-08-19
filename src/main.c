@@ -85,7 +85,7 @@ i32 main(void) {
     bvh_t *bvh = new_bvh();
 
     start_time = clock();
-    make_bvh(knight->triangles, knight->N_triangles, 4, bvh);
+    make_bvh(knight->triangles, knight->N_triangles, 6, bvh);
     end_time = clock();
 
     duration = 1000.0 * (end_time - start_time) / CLOCKS_PER_SEC;
