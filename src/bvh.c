@@ -16,33 +16,52 @@ static void add_triangle(bvh_t *bvh, triangle_t *triangle) {
 }
 
 static void split_bvh(bvh_t *parent, usize depth) {
+    // TODO check if this actually splits properly
     if (depth == 0) return;
 
     parent->left = new_bvh();
     parent->right = new_bvh();
 
-    float x_centre = (parent->box.a.x + parent->box.b.x) / 2;
+    parent->left->parent = parent;
+    parent->right->parent = parent;
+
+    printf("%zu: %zu triangles\n", depth, parent->n);
+
+    vec3 centre = fmul3(0.5, vadd3(parent->box.a, parent->box.b));
     for (usize i = 0; i < parent->n; i++) {
         // divide based on x coord
         // TODO split along longest axis
         triangle_t *tri = &parent->triangles[i];
-        float x_tri_centre = (tri->v1->x + tri->v2->x + tri->v3->x) / 3;
-        bvh_t *child = x_tri_centre < x_centre ? parent->left : parent->right;
+        vec3 tri_centre = fmul3(1 / 3.f, vadd3(*tri->v1, vadd3(*tri->v2, *tri->v3)));
+        bvh_t *child = tri_centre.x < centre.x ? parent->left : parent->right;
         add_triangle(child, tri);
         grow_to_include_triange(&child->box, tri);
+    }
+
+    if (parent->left) {
+        printf("- left: %zu triangles\n", parent->left->n);
+        vprint3(parent->left->box.a);
+        vprint3(parent->left->box.b);
+    }
+    if (parent->right) {
+        printf("- right: %zu triangles\n", parent->right->n);
+        vprint3(parent->right->box.a);
+        vprint3(parent->right->box.b);
     }
 
     split_bvh(parent->left, depth - 1);
     split_bvh(parent->right, depth - 1);
 
-    parent->n = parent->_n_alloc = 0;
-    free(parent->triangles);
-    parent->triangles = NULL;
+    if (parent->left && parent->right) {
+        parent->n = parent->_n_alloc = 0;
+        free(parent->triangles);
+        parent->triangles = NULL;
+    }
 }
 
 bvh_t *new_bvh(void) {
     bvh_t *root = (bvh_t *) malloc(sizeof(bvh_t));
-    root->left = root->right = NULL;
+    root->parent = root->left = root->right = NULL;
     root->_n_alloc = 8;
     root->triangles = (triangle_t *) malloc(sizeof(triangle_t) * root->_n_alloc);
     root->n = 0;
@@ -68,28 +87,30 @@ void make_bvh(triangle_t *triangles, usize n, usize max_depth, bvh_t *out) {
 }
 
 void ray_bvh_intersection(ray_t *ray, bvh_t *bvh, hitinfo_t *out) {
-    // TODO make this iterative
     if (!ray_aabb_intersection(ray, &bvh->box)) return;
 
     hitinfo_t hit;
-    if (bvh->triangles) {
-        for (usize i = 0; i < bvh->n; i++) {
-            ray_triangle_intersection(ray, &bvh->triangles[i], &hit);
+    bvh_t *stack[16];
+    usize index = 0;
 
-            // depth checking
-            if (hit.did_hit && min(hit.dst, out->dst) != out->dst)
-                *out = hit;
+    stack[index++] = bvh;
+
+    while (index > 0) {
+        bvh_t *this = stack[--index];
+
+        if (ray_aabb_intersection(ray, &this->box)) {
+            if (this->triangles) { // childless
+                for (usize i = 0; i < this->n; i++) {
+                    ray_triangle_intersection(ray, &this->triangles[i], &hit);
+                    if (hit.did_hit && min(hit.dst, out->dst) != out->dst)  // depth
+                        *out = hit;
+                }
+            } else {
+                stack[index++] = this->left;
+                stack[index++] = this->right;
+            }
         }
     }
-
-    // no fear of numerical error here
-    if (out->did_hit && out->dst == hit.dst) return;
-
-    // recurse
-    if (bvh->left)
-        ray_bvh_intersection(ray, bvh->left, out);
-    if (bvh->right)
-        ray_bvh_intersection(ray, bvh->right, out);
 }
 
 void del_bvh(bvh_t *root) {
