@@ -45,8 +45,11 @@ typedef struct hitinfo_t {
     material_t *material;
 } hitinfo_t;
 
-// constructor for hitinfo_t
+// constructors
 void new_hitinfo(hitinfo_t *out);
+void mat_rough(vec3 colour, material_t *out);
+void mat_smooth(vec3 colour, f32 smoothness, f32 specular_probability, vec3 specular_colour, material_t *out);
+void mat_source(vec3 emission_colour, f32 emission_strength, material_t *out);
 
 // aabb_t stuff:
 void new_aabb(aabb_t *out);

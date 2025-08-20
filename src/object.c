@@ -10,6 +10,33 @@ inline void new_hitinfo(hitinfo_t *out) {
     out->point = (vec3) {0, 0, 0};
 }
 
+void mat_rough(vec3 colour, material_t *out) {
+    out->colour = colour;
+    out->specular_colour = (vec3) {};
+    out->smoothness = 0;
+    out->specular_probability = 0;
+    out->emission_strength = 0;
+    out->emission_colour = (vec3) {};
+}
+
+void mat_smooth(vec3 colour, f32 smoothness, f32 specular_probability, vec3 specular_colour, material_t *out) {
+    out->colour = colour;
+    out->specular_colour = (vec3) {};
+    out->smoothness = 0;
+    out->specular_probability = 0;
+    out->emission_strength = 0;
+    out->emission_colour = (vec3) {};
+}
+
+void mat_source(vec3 emission_colour, f32 emission_strength, material_t *out) {
+    out->colour = (vec3) {};
+    out->specular_colour = (vec3) {};
+    out->smoothness = 0;
+    out->specular_probability = 0;
+    out->emission_strength = emission_strength;
+    out->emission_colour = emission_colour;
+}
+
 // aabb_t stuff:
 void new_aabb(aabb_t *out) {
     out->a = (vec3) { INFINITY, INFINITY, INFINITY };

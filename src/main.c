@@ -2,20 +2,20 @@
 #include <stdlib.h>
 #include <time.h>
 
-#include "random.h"
 #include "types.h"
-#include "camera.h"
-#include "render.h"
-#include "model.h"
 #include "vec.h"
 #include "ppm.h"
+#include "random.h"
+
+#include "camera.h"
+#include "object.h"
+#include "render.h"
+#include "model.h"
 #include "bvh.h"
 
 #define SCREEN_WIDTH 1920
 #define SCREEN_HEIGHT 1080
-#define SETUP_SCENE_MODE false
-
-// TODO BVH and more optimizations
+#define SETUP_SCENE_MODE true
 
 // buffer index to vec3 and vice versa
 #define i2v(i) ({ const usize _i = (i); (vec3) { _i%SCREEN_WIDTH, SCREEN_HEIGHT - _i/SCREEN_WIDTH - 1, 0 }; })
@@ -42,30 +42,34 @@ i32 main(void) {
         6,  // zNear
         SCREEN_WIDTH, SCREEN_HEIGHT
     );
-    printf("width & height: ");
-    vprint3((vec3) {scene->camera.width, scene->camera.height, 0});
+    printf("(width, height): (%f, %f)\n", scene->camera.width, scene->camera.height);
 
+    material_t floor_mat; mat_rough(RED, &floor_mat);
     scene_add_triangle(scene, (triangle_t) {
         &((vec3) {100, 0, 100}),
         &((vec3) {-100, 0, 100}),
         &((vec3) {100, 0, -100}),
-        &(material_t) { RED }
+        &floor_mat
     });
     scene_add_triangle(scene, (triangle_t) {
             &((vec3) {-100, 0, 100}),
             &((vec3) {100, 0, -100}),
             &((vec3) {-100, 0, -100}),
-            &(material_t) { RED }
+            &floor_mat
     });
+
+    material_t sphere_mat_1; mat_rough(BLUE, &sphere_mat_1);
     scene_add_sphere(scene, (sphere_t) {
         (vec3) {-3, 1, 1},
         1,
-        &(material_t) { BLUE }
+        &sphere_mat_1
     });
+
+    material_t sphere_mat_2; mat_rough(CYAN, &sphere_mat_2);
     scene_add_sphere(scene, (sphere_t) {
         (vec3) {3, 1, 1},
         1,
-        &(material_t) { CYAN }
+        &sphere_mat_2
     });
 
     // scene_add_sphere(scene, (sphere_t) {
@@ -76,7 +80,8 @@ i32 main(void) {
 
     // load knight
     FILE *knight_file = fopen("modal/Knight.obj", "r");
-    model_t *knight = load_model(knight_file, &(material_t) { .colour = { 0.6, 0.6, 0.6 } });
+    material_t model_mat; mat_rough((vec3) { 0.6, 0.6, 0.6 }, &model_mat);
+    model_t *knight = load_model(knight_file, &model_mat);
     fclose(knight_file);
 
     scale_model(knight, (vec3) {1.5, 1.5, 1.5});
@@ -98,8 +103,8 @@ i32 main(void) {
 
     // populate the buffer
     start_time = clock();
-    const usize RAYS_PER_PIXEL = 5000;
-    const usize BOUNCES = 5;
+    const usize RAYS_PER_PIXEL = 10;
+    const usize BOUNCES = 1;
     hitinfo_t hit;
     for (usize i = 0; i < SCREEN_HEIGHT * SCREEN_WIDTH; i++) {
         vec3 coords = i2v(i);
