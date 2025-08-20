@@ -105,13 +105,3 @@ void del_bvh(bvh_t *root) {
         del_bvh(root->right);
     free(root);
 }
-
-
-void bvh_debug(ray_t *ray, bvh_t *bvh, hitinfo_t *out) {
-    new_hitinfo(out);
-
-    if (ray_aabb_intersection(ray, &bvh->box)) {
-        if (ray_aabb_intersection(ray, &bvh->right->right->right->right->left->right->box))
-            out->did_hit = true;
-    }
-}
