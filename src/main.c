@@ -98,8 +98,8 @@ i32 main(void) {
 
     // populate the buffer
     start_time = clock();
-    const usize RAYS_PER_PIXEL = 10;
-    const usize BOUNCES = 2;
+    const usize RAYS_PER_PIXEL = 5000;
+    const usize BOUNCES = 5;
     hitinfo_t hit;
     for (usize i = 0; i < SCREEN_HEIGHT * SCREEN_WIDTH; i++) {
         vec3 coords = i2v(i);

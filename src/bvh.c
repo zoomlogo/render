@@ -16,40 +16,22 @@ static void add_triangle(bvh_t *bvh, triangle_t *triangle) {
 }
 
 static void split_bvh(bvh_t *parent, usize depth) {
-    // TODO check if this actually splits properly
     if (depth == 0) return;
 
     parent->left = new_bvh();
     parent->right = new_bvh();
 
-    parent->left->parent = parent;
-    parent->right->parent = parent;
-
-    printf("%zu: %zu triangles\n", depth, parent->n);
-
     vec3 centre = fmul3(0.5, vadd3(parent->box.a, parent->box.b));
     usize max_i = centre.x > centre.y ? (centre.x > centre.z ? 0 : 2) : 1;
     float axis_centre = centre.x > centre.y ? (centre.x > centre.z ? centre.x : centre.z) : centre.y;
     for (usize i = 0; i < parent->n; i++) {
-        // divide based on x coord
-        // TODO split along longest axis
+        // split along longest axis
         triangle_t *tri = &parent->triangles[i];
         vec3 tri_centre = fmul3(1 / 3.f, vadd3(*tri->v1, vadd3(*tri->v2, *tri->v3)));
         float tri_centre_axis = max_i == 0 ? tri_centre.x : (max_i == 1 ? tri_centre.y : tri_centre.z);
         bvh_t *child = tri_centre_axis < axis_centre ? parent->left : parent->right;
         add_triangle(child, tri);
         grow_to_include_triange(&child->box, tri);
-    }
-
-    if (parent->left) {
-        printf("- left: %zu triangles\n", parent->left->n);
-        vprint3(parent->left->box.a);
-        vprint3(parent->left->box.b);
-    }
-    if (parent->right) {
-        printf("- right: %zu triangles\n", parent->right->n);
-        vprint3(parent->right->box.a);
-        vprint3(parent->right->box.b);
     }
 
     split_bvh(parent->left, depth - 1);
@@ -64,7 +46,7 @@ static void split_bvh(bvh_t *parent, usize depth) {
 
 bvh_t *new_bvh(void) {
     bvh_t *root = (bvh_t *) malloc(sizeof(bvh_t));
-    root->parent = root->left = root->right = NULL;
+    root->left = root->right = NULL;
     root->_n_alloc = 8;
     root->triangles = (triangle_t *) malloc(sizeof(triangle_t) * root->_n_alloc);
     root->n = 0;

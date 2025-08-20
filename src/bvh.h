@@ -9,7 +9,6 @@ typedef struct bvh_t {
     usize _n_alloc;
     struct bvh_t *left;
     struct bvh_t *right;
-    struct bvh_t *parent;
 } bvh_t;
 
 bvh_t *new_bvh(void);
