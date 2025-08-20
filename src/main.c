@@ -13,9 +13,11 @@
 #include "model.h"
 #include "bvh.h"
 
-#define SCREEN_WIDTH 1920
-#define SCREEN_HEIGHT 1080
-#define SETUP_SCENE_MODE true
+// #define SCREEN_WIDTH 1920
+// #define SCREEN_HEIGHT 1080
+#define SCREEN_WIDTH 1200
+#define SCREEN_HEIGHT 1200
+#define SETUP_SCENE_MODE false
 
 // buffer index to vec3 and vice versa
 #define i2v(i) ({ const usize _i = (i); (vec3) { _i%SCREEN_WIDTH, SCREEN_HEIGHT - _i/SCREEN_WIDTH - 1, 0 }; })
@@ -30,13 +32,12 @@ i32 main(void) {
     pcg_init(time(NULL));
 
     // scene setup
-    scene_t *scene = new_scene();
+    scene_t *scene = new_scene(false);
     if (SETUP_SCENE_MODE) printf("in setup scene mode\n");
     // camera setup
-    scene_setup_sun(scene, (vec3) {-3, 4, 8}, WHITE, 100, 60);
     scene->camera = setup_camera(
-        (vec3) {0, 5, 15},  // pos
-        (vec3) {0, -0.3, -1},  // dir
+        (vec3) {0, 3.3, 10},  // pos
+        (vec3) {0, 0, -1},  // dir
         (vec3) {1, 0, 0},  // screen_x_dir
         60,  // fov
         6,  // zNear
@@ -44,43 +45,129 @@ i32 main(void) {
     );
     printf("(width, height): (%f, %f)\n", scene->camera.width, scene->camera.height);
 
-    material_t floor_mat; mat_rough(RED, &floor_mat);
+    material_t floor_mat; mat_rough((vec3) { 0.6, 0.6, 0.6 }, &floor_mat);
     scene_add_triangle(scene, (triangle_t) {
-        &((vec3) {100, 0, 100}),
-        &((vec3) {-100, 0, 100}),
-        &((vec3) {100, 0, -100}),
+        &((vec3) {4, 0, 4}),
+        &((vec3) {-4, 0, 4}),
+        &((vec3) {4, 0, -4}),
         &floor_mat
     });
     scene_add_triangle(scene, (triangle_t) {
-            &((vec3) {-100, 0, 100}),
-            &((vec3) {100, 0, -100}),
-            &((vec3) {-100, 0, -100}),
+            &((vec3) {-4, 0, 4}),
+            &((vec3) {4, 0, -4}),
+            &((vec3) {-4, 0, -4}),
+            &floor_mat
+    });
+    scene_add_triangle(scene, (triangle_t) {
+            &((vec3) {-4, 8, -4}),
+            &((vec3) {4, 0, -4}),
+            &((vec3) {-4, 0, -4}),
+            &floor_mat
+    });
+    scene_add_triangle(scene, (triangle_t) {
+            &((vec3) {-4, 8, -4}),
+            &((vec3) {4, 0, -4}),
+            &((vec3) {4, 8, -4}),
             &floor_mat
     });
 
-    material_t sphere_mat_1; mat_rough(BLUE, &sphere_mat_1);
-    scene_add_sphere(scene, (sphere_t) {
-        (vec3) {-3, 1, 1},
-        1,
-        &sphere_mat_1
+    scene_add_triangle(scene, (triangle_t) {
+            &((vec3) {-4, 8, -4}),
+            &((vec3) {4, 8, -4}),
+            &((vec3) {4, 8, -1}),
+            &floor_mat
+    });
+    scene_add_triangle(scene, (triangle_t) {
+            &((vec3) {-4, 8, -4}),
+            &((vec3) {4, 8, -1}),
+            &((vec3) {-4, 8, -1}),
+            &floor_mat
     });
 
-    material_t sphere_mat_2; mat_rough(CYAN, &sphere_mat_2);
-    scene_add_sphere(scene, (sphere_t) {
-        (vec3) {3, 1, 1},
-        1,
-        &sphere_mat_2
+    scene_add_triangle(scene, (triangle_t) {
+            &((vec3) {-4, 8, 4}),
+            &((vec3) {4, 8, 4}),
+            &((vec3) {4, 8, 1}),
+            &floor_mat
+    });
+    scene_add_triangle(scene, (triangle_t) {
+            &((vec3) {-4, 8, 4}),
+            &((vec3) {4, 8, 1}),
+            &((vec3) {-4, 8, 1}),
+            &floor_mat
     });
 
-    // scene_add_sphere(scene, (sphere_t) {
-    //     (vec3) {0, 2, 0},
-    //     2,
-    //     (material_t) { GREEN }
-    // });
+    scene_add_triangle(scene, (triangle_t) {
+            &((vec3) {-4, 8, -1}),
+            &((vec3) {-1, 8, -1}),
+            &((vec3) {-1, 8, 1}),
+            &floor_mat
+    });
+    scene_add_triangle(scene, (triangle_t) {
+            &((vec3) {-4, 8, -1}),
+            &((vec3) {-1, 8, 1}),
+            &((vec3) {-4, 8, 1}),
+            &floor_mat
+    });
+
+    scene_add_triangle(scene, (triangle_t) {
+            &((vec3) {4, 8, -1}),
+            &((vec3) {1, 8, -1}),
+            &((vec3) {1, 8, 1}),
+            &floor_mat
+    });
+    scene_add_triangle(scene, (triangle_t) {
+            &((vec3) {4, 8, -1}),
+            &((vec3) {1, 8, 1}),
+            &((vec3) {4, 8, 1}),
+            &floor_mat
+    });
+
+    material_t left_wall; mat_rough(RED, &left_wall);
+    scene_add_triangle(scene, (triangle_t) {
+            &((vec3) {-4, 8, -4}),
+            &((vec3) {-4, 0, -4}),
+            &((vec3) {-4, 0, 4}),
+            &left_wall
+    });
+    scene_add_triangle(scene, (triangle_t) {
+            &((vec3) {-4, 8, -4}),
+            &((vec3) {-4, 8, 4}),
+            &((vec3) {-4, 0, 4}),
+            &left_wall
+    });
+
+    material_t right_wall; mat_rough(BLUE, &right_wall);
+    scene_add_triangle(scene, (triangle_t) {
+            &((vec3) {4, 8, -4}),
+            &((vec3) {4, 0, -4}),
+            &((vec3) {4, 0, 4}),
+            &right_wall
+    });
+    scene_add_triangle(scene, (triangle_t) {
+            &((vec3) {4, 8, -4}),
+            &((vec3) {4, 8, 4}),
+            &((vec3) {4, 0, 4}),
+            &right_wall
+    });
+
+    material_t light_source; mat_source(WHITE, 1.2, &light_source);
+    scene_add_triangle(scene, (triangle_t) {
+            &((vec3) {-1, 8, -1}),
+            &((vec3) {1, 8, -1}),
+            &((vec3) {1, 8, 1}),
+            &light_source
+    });
+    scene_add_triangle(scene, (triangle_t) {
+            &((vec3) {-1, 8, -1}),
+            &((vec3) {1, 8, 1}),
+            &((vec3) {-1, 8, 1}),
+            &light_source
+    });
 
     // load knight
     FILE *knight_file = fopen("modal/Knight.obj", "r");
-    material_t model_mat; mat_rough((vec3) { 0.6, 0.6, 0.6 }, &model_mat);
+    material_t model_mat; mat_rough((vec3) { 0.3, 0.3, 0.4 }, &model_mat);
     model_t *knight = load_model(knight_file, &model_mat);
     fclose(knight_file);
 
@@ -104,7 +191,7 @@ i32 main(void) {
     // populate the buffer
     start_time = clock();
     const usize RAYS_PER_PIXEL = 10;
-    const usize BOUNCES = 1;
+    const usize BOUNCES = 4;
     hitinfo_t hit;
     for (usize i = 0; i < SCREEN_HEIGHT * SCREEN_WIDTH; i++) {
         vec3 coords = i2v(i);

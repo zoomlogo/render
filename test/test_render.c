@@ -8,7 +8,7 @@
 INIT_TEST();
 
 static void test_scene_setup(void) {
-    scene_t *scene = new_scene();
+    scene_t *scene = new_scene(true);
     scene_setup_sun(scene, (vec3) {0,1,0}, WHITE, 8, 10);
 
     ASSERT(eql3(scene->sun.colour, WHITE));
@@ -20,7 +20,7 @@ static void test_scene_setup(void) {
 }
 
 static void test_scene_add_object(void) {
-    scene_t *scene = new_scene();
+    scene_t *scene = new_scene(true);
     scene_add_sphere(scene, (sphere_t) { (vec3) {-3, 1, 1}, 1, &(material_t) { BLUE } });
 
     ASSERT(scene->num_objects == 1);
@@ -42,7 +42,7 @@ static void test_scene_add_object(void) {
 }
 
 static void test_scene_add_source(void) {
-    scene_t *scene = new_scene();
+    scene_t *scene = new_scene(true);
     scene_add_sphere(scene, (sphere_t) { (vec3) {-3, 1, 1}, 1, &(material_t) { BLUE } });
     scene_add_sphere(scene, (sphere_t) { (vec3) {-3, 3, 1}, 2, &(material_t) { BLUE } });
     scene_add_sphere(scene, (sphere_t) { (vec3) {-3, 1, 4}, 1, &(material_t) { BLUE } });
@@ -68,7 +68,7 @@ static void test_scene_add_source(void) {
 
 
 void test_scene_add_model(void) {
-    scene_t *scene = new_scene();
+    scene_t *scene = new_scene(true);
     FILE *file = fopen("modal/Cube.obj", "r");
     model_t *model = load_model(file, &(material_t) { WHITE });
     fclose(file);

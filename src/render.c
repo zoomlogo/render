@@ -11,7 +11,7 @@
 #include "ppm.h"
 
 // scene handling
-scene_t *new_scene(void) {
+scene_t *new_scene(bool enable_sky) {
     scene_t *scene = (scene_t *) malloc(sizeof(scene_t));
     scene->_m_alloc = 4;
     scene->_o_alloc = 4;
@@ -22,6 +22,8 @@ scene_t *new_scene(void) {
 
     scene->models = (model_t *) malloc(sizeof(model_t) * scene->_m_alloc);
     scene->objects = (object_t *) malloc(sizeof(object_t) * scene->_o_alloc);
+
+    scene->enable_sky = enable_sky;
 
     return scene;
 }
@@ -186,7 +188,7 @@ vec3 trace(ray_t original_ray, scene_t *scene, usize num_bounces) {
                 hitinfo_t ghost_hit;
                 ray_t ghost_ray = { hit.point, rand_sphere_cosine2(scene->sun.dir, 4) };
                 get_closest_hit(&ghost_ray, scene, &ghost_hit);
-                if (!ghost_hit.did_hit)
+                if (!ghost_hit.did_hit && scene->enable_sky)
                     incoming_light = vadd3(incoming_light, vmul3(get_environment_light(&ray, scene->sun), ray_colour));
             }
 
@@ -204,7 +206,8 @@ vec3 trace(ray_t original_ray, scene_t *scene, usize num_bounces) {
                 }
             }
         } else {
-            incoming_light = vadd3(incoming_light, vmul3(get_environment_light(&ray, scene->sun), ray_colour));
+            if (scene->enable_sky)
+                incoming_light = vadd3(incoming_light, vmul3(get_environment_light(&ray, scene->sun), ray_colour));
             if (i != 0)
                 incoming_light = fmul3(0.5, incoming_light);
             break;

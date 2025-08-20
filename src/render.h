@@ -19,10 +19,11 @@ typedef struct scene_t {
 
     sun_t sun;
     camera_t camera;
+    bool enable_sky;
 } scene_t;
 
 // scene related functions
-scene_t *new_scene(void);
+scene_t *new_scene(bool enable_sky);
 void scene_setup_sun(scene_t *scene, vec3 dir, vec3 colour, f32 focus, f32 intensity);
 void scene_add_sphere(scene_t *scene, sphere_t sphere);
 void scene_add_triangle(scene_t *scene, triangle_t triangle);
