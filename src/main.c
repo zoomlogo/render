@@ -74,52 +74,52 @@ i32 main(void) {
     scene_add_triangle(scene, (triangle_t) {
             &((vec3) {-4, 8, -4}),
             &((vec3) {4, 8, -4}),
-            &((vec3) {4, 8, -1}),
+            &((vec3) {4, 8, 0}),
             &floor_mat
     });
     scene_add_triangle(scene, (triangle_t) {
             &((vec3) {-4, 8, -4}),
-            &((vec3) {4, 8, -1}),
-            &((vec3) {-4, 8, -1}),
+            &((vec3) {4, 8, 0}),
+            &((vec3) {-4, 8, 0}),
             &floor_mat
     });
 
     scene_add_triangle(scene, (triangle_t) {
             &((vec3) {-4, 8, 4}),
             &((vec3) {4, 8, 4}),
-            &((vec3) {4, 8, 1}),
+            &((vec3) {4, 8, 2}),
             &floor_mat
     });
     scene_add_triangle(scene, (triangle_t) {
             &((vec3) {-4, 8, 4}),
-            &((vec3) {4, 8, 1}),
-            &((vec3) {-4, 8, 1}),
+            &((vec3) {4, 8, 2}),
+            &((vec3) {-4, 8, 2}),
             &floor_mat
     });
 
     scene_add_triangle(scene, (triangle_t) {
-            &((vec3) {-4, 8, -1}),
-            &((vec3) {-1, 8, -1}),
-            &((vec3) {-1, 8, 1}),
+            &((vec3) {-4, 8, 0}),
+            &((vec3) {-1, 8, 0}),
+            &((vec3) {-1, 8, 2}),
             &floor_mat
     });
     scene_add_triangle(scene, (triangle_t) {
-            &((vec3) {-4, 8, -1}),
-            &((vec3) {-1, 8, 1}),
-            &((vec3) {-4, 8, 1}),
+            &((vec3) {-4, 8, 0}),
+            &((vec3) {-1, 8, 2}),
+            &((vec3) {-4, 8, 2}),
             &floor_mat
     });
 
     scene_add_triangle(scene, (triangle_t) {
-            &((vec3) {4, 8, -1}),
-            &((vec3) {1, 8, -1}),
-            &((vec3) {1, 8, 1}),
+            &((vec3) {4, 8, 0}),
+            &((vec3) {1, 8, 0}),
+            &((vec3) {1, 8, 2}),
             &floor_mat
     });
     scene_add_triangle(scene, (triangle_t) {
-            &((vec3) {4, 8, -1}),
-            &((vec3) {1, 8, 1}),
-            &((vec3) {4, 8, 1}),
+            &((vec3) {4, 8, 0}),
+            &((vec3) {1, 8, 2}),
+            &((vec3) {4, 8, 2}),
             &floor_mat
     });
 
@@ -153,15 +153,15 @@ i32 main(void) {
 
     material_t light_source; mat_source(WHITE, 1.2, &light_source);
     scene_add_triangle(scene, (triangle_t) {
-            &((vec3) {-1, 8, -1}),
-            &((vec3) {1, 8, -1}),
-            &((vec3) {1, 8, 1}),
+            &((vec3) {-1, 8, 0}),
+            &((vec3) {1, 8, 0}),
+            &((vec3) {1, 8, 2}),
             &light_source
     });
     scene_add_triangle(scene, (triangle_t) {
-            &((vec3) {-1, 8, -1}),
-            &((vec3) {1, 8, 1}),
-            &((vec3) {-1, 8, 1}),
+            &((vec3) {-1, 8, 0}),
+            &((vec3) {1, 8, 2}),
+            &((vec3) {-1, 8, 2}),
             &light_source
     });
 
@@ -190,8 +190,8 @@ i32 main(void) {
 
     // populate the buffer
     start_time = clock();
-    const usize RAYS_PER_PIXEL = 10;
-    const usize BOUNCES = 4;
+    const usize RAYS_PER_PIXEL = 1000;
+    const usize BOUNCES = 5;
     hitinfo_t hit;
     for (usize i = 0; i < SCREEN_HEIGHT * SCREEN_WIDTH; i++) {
         vec3 coords = i2v(i);
