@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <time.h>
 
+#include "pfor.h"
 #include "types.h"
 #include "vec.h"
 #include "ppm.h"
@@ -23,6 +24,31 @@
 #define i2v(i) ({ const usize _i = (i); (vec3) { _i%SCREEN_WIDTH, SCREEN_HEIGHT - _i/SCREEN_WIDTH - 1, 0 }; })
 #define v2i(v) ({ const vec3 _v = (v); (usize) ((SCREEN_HEIGHT - _v.y - 1) * SCREEN_WIDTH + _v.x); })
 
+// global objects
+scene_t *scene;
+const usize RAYS_PER_PIXEL = 1000;
+const usize BOUNCES = 5;
+const usize NUM_THREADS = 100;
+
+vec3 render(usize i) {
+    vec3 coords = i2v(i);
+    vec3 world_coords = screen_to_world_coords(scene->camera, coords);
+    vec3 dir = normalize3(vsub3(world_coords, scene->camera.pos));
+    ray_t ray = { world_coords, dir };
+
+    hitinfo_t hit;
+    if (SETUP_SCENE_MODE) {
+        get_closest_hit(&ray, scene, &hit);
+        return hit.did_hit ? hit.material->colour : (vec3) { 0, 0, 0 };
+    }
+
+    vec3 colour = { 0, 0, 0 };
+    for (usize j = 0; j < RAYS_PER_PIXEL; j++)
+        colour = vadd3(colour, trace(ray, scene, BOUNCES));
+
+    return fmul3(1 / (f32) RAYS_PER_PIXEL, colour);
+}
+
 i32 main(void) {
     clock_t start_time, end_time;
     double duration;
@@ -32,7 +58,7 @@ i32 main(void) {
     pcg_init(time(NULL));
 
     // scene setup
-    scene_t *scene = new_scene(false);
+    scene = new_scene(false);
     if (SETUP_SCENE_MODE) printf("in setup scene mode\n");
     // camera setup
     scene->camera = setup_camera(
@@ -190,27 +216,7 @@ i32 main(void) {
 
     // populate the buffer
     start_time = clock();
-    const usize RAYS_PER_PIXEL = 1000;
-    const usize BOUNCES = 5;
-    hitinfo_t hit;
-    for (usize i = 0; i < SCREEN_HEIGHT * SCREEN_WIDTH; i++) {
-        vec3 coords = i2v(i);
-        vec3 world_coords = screen_to_world_coords(scene->camera, coords);
-        vec3 dir = normalize3(vsub3(world_coords, scene->camera.pos));
-        ray_t ray = { world_coords, dir };
-
-        if (SETUP_SCENE_MODE) {
-            get_closest_hit(&ray, scene, &hit);
-            buffer[i] = hit.did_hit ? hit.material->colour : (vec3) { 0, 0, 0 };
-            continue;
-        }
-
-        vec3 colour = { 0, 0, 0 };
-        for (usize j = 0; j < RAYS_PER_PIXEL; j++)
-            colour = vadd3(colour, trace(ray, scene, BOUNCES));
-
-        buffer[i] = fmul3(1 / (f32) RAYS_PER_PIXEL, colour);
-    }
+    pfor_vec3(buffer, SCREEN_WIDTH * SCREEN_HEIGHT, NUM_THREADS, render);
     end_time = clock();
 
     duration = 1000.0 * (end_time - start_time) / CLOCKS_PER_SEC;

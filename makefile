@@ -3,12 +3,12 @@ CC=clang
 FLAGS=-Wall -std=c23 -O3
 
 # object file dependencies for target render:
-RENDER_DEPS := obj/main.o obj/vec.o obj/ppm.o obj/model.o obj/bvh.o
+RENDER_DEPS := obj/main.o obj/vec.o obj/ppm.o obj/model.o obj/bvh.o obj/pfor.o
 RENDER_DEPS += obj/camera.o obj/render.o obj/random.o obj/object.o
 
 # unit testing object file dependencies
 TEST_DEPS := obj/vec.o obj/ppm.o obj/model.o obj/object.o
-TEST_DEPS += obj/camera.o obj/render.o obj/random.o obj/bvh.o
+TEST_DEPS += obj/camera.o obj/render.o obj/random.o obj/bvh.o obj/pfor.o
 TEST_DEPS += obj/test_all.o obj/test_vec.o obj/test_ppm.o obj/test_model.o obj/test_bvh.o
 TEST_DEPS += obj/test_camera.o obj/test_render.o obj/test_random.o obj/test_object.o
 
@@ -45,6 +45,9 @@ obj/model.o: src/model.c src/model.h
 
 obj/object.o: src/object.c src/object.h
 	$(CC) -c $(FLAGS) src/object.c -o obj/object.o
+
+obj/pfor.o: src/pfor.c src/pfor.h
+	$(CC) -c $(FLAGS) src/pfor.c -o obj/pfor.o
 
 # test:
 obj/test_all.o: test/test_all.c
