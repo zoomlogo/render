@@ -26,8 +26,8 @@
 
 // global objects
 scene_t *scene;
-const usize RAYS_PER_PIXEL = 1000;
-const usize BOUNCES = 5;
+const usize RAYS_PER_PIXEL = 100;
+const usize BOUNCES = 4;
 const usize NUM_THREADS = 100;
 
 vec3 render(usize i) {
@@ -177,7 +177,7 @@ i32 main(void) {
             &right_wall
     });
 
-    material_t light_source; mat_source(WHITE, 1.2, &light_source);
+    material_t light_source; mat_source(WHITE, 6.0, &light_source);
     scene_add_triangle(scene, (triangle_t) {
             &((vec3) {-1, 8, 0}),
             &((vec3) {1, 8, 0}),

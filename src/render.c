@@ -188,8 +188,10 @@ vec3 trace(ray_t original_ray, scene_t *scene, usize num_bounces) {
                 hitinfo_t ghost_hit;
                 ray_t ghost_ray = { hit.point, rand_sphere_cosine2(scene->sun.dir, 4) };
                 get_closest_hit(&ghost_ray, scene, &ghost_hit);
-                if (!ghost_hit.did_hit && scene->enable_sky)
+                if (!ghost_hit.did_hit && scene->enable_sky) {
                     incoming_light = vadd3(incoming_light, vmul3(get_environment_light(&ray, scene->sun), ray_colour));
+                    incoming_light = fmul3(0.5, incoming_light);
+                }
             }
 
             // dls for other objects
@@ -203,6 +205,7 @@ vec3 trace(ray_t original_ray, scene_t *scene, usize num_bounces) {
                 if (ghost_hit.did_hit && ghost_hit.dst - length3(pv) < eps) {
                     vec3 ghost_emitted_light = fmul3(ghost_hit.material->emission_strength, ghost_hit.material->emission_colour);
                     incoming_light = vadd3(incoming_light, vmul3(ghost_emitted_light, ray_colour));
+                    incoming_light = fmul3(0.5, incoming_light);
                 }
             }
         } else {
