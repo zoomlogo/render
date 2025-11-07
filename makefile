@@ -1,14 +1,15 @@
+# run `compiledb -n make` to generate compile_commands.json for lsp
 CC=clang
 # compiler flags
 FLAGS=-Wall -std=c23 -O3
 
 # object file dependencies for target render:
 RENDER_DEPS := obj/main.o obj/vec.o obj/ppm.o obj/model.o obj/bvh.o obj/pfor.o
-RENDER_DEPS += obj/camera.o obj/render.o obj/random.o obj/object.o
+RENDER_DEPS += obj/camera.o obj/render.o obj/random.o obj/object.o obj/scene.o
 
 # unit testing object file dependencies
 TEST_DEPS := obj/vec.o obj/ppm.o obj/model.o obj/object.o
-TEST_DEPS += obj/camera.o obj/render.o obj/random.o obj/bvh.o obj/pfor.o
+TEST_DEPS += obj/camera.o obj/render.o obj/random.o obj/bvh.o obj/pfor.o obj/scene.o
 TEST_DEPS += obj/test_all.o obj/test_vec.o obj/test_ppm.o obj/test_model.o obj/test_bvh.o
 TEST_DEPS += obj/test_camera.o obj/test_render.o obj/test_random.o obj/test_object.o
 
@@ -48,6 +49,9 @@ obj/object.o: src/object.c src/object.h
 
 obj/pfor.o: src/pfor.c src/pfor.h
 	$(CC) -c $(FLAGS) src/pfor.c -o obj/pfor.o
+
+obj/scene.o: src/scene.c src/scene.h
+	$(CC) -c $(FLAGS) src/scene.c -o obj/scene.o
 
 # test:
 obj/test_all.o: test/test_all.c

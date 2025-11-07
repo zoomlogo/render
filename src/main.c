@@ -199,6 +199,7 @@ i32 main(void) {
 
     scale_model(knight, (vec3) {1.5, 1.5, 1.5});
     rotate_model(knight, (vec3) {0, 1, 0}, 270);
+    translate_model(knight, (vec3) {0, 0, 0.01});
 
     bvh_t *bvh = new_bvh();
 
