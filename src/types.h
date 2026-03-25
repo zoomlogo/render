@@ -1,9 +1,10 @@
 #pragma once
 #include <stddef.h>
 #include <stdint.h>
+#include <float.h>
 
 #define M_PI 3.14159265358979323846
-#define FEPS 0.000001
+#define FEPS FLT_EPSILON
 
 typedef int8_t   i8;
 typedef int16_t i16;
