@@ -1,3 +1,13 @@
+Building:
+
+    cc build.c -o build
+    ./build
+
+Running:
+
+    ./test_all
+    ./render
+
 Resources:
 - https://cppreference.com
 - https://youtu.be/Qz0KTGYJtUk
